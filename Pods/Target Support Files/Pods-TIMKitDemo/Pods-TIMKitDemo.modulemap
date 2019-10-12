@@ -1,0 +1,6 @@
+module Pods_TIMKitDemo {
+  umbrella header "Pods-TIMKitDemo-umbrella.h"
+
+  export *
+  module * { export * }
+}
