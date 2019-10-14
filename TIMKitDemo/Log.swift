@@ -11,8 +11,11 @@ import Foundation
 public class Log {
     
     private class func pretty(hearts:String = "💚💚💚", filename: String = #file, function : String = #function, line: Int = #line) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        let formattedDate = dateFormatter.string(from: Date())
         let filename = URL(fileURLWithPath: filename).lastPathComponent.split(separator: ".").first ?? ""
-        let pretty = "\(filename) \(line) \(function): \(hearts) "
+        let pretty = "\(formattedDate) \(filename) \(line) \(function): \(hearts) "
         return pretty
     }
     

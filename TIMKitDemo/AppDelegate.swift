@@ -7,17 +7,22 @@
 //
 
 import UIKit
+import RxSwift
+import coswift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
         let config = TIMSdkConfig()
         config.sdkAppId = 1400255804
+        config.disableLogPrint = !Environment.isDebug()
         config.connListener = self
-        TIMManager.sharedInstance()?.initSdk(config)
+        TIMManager.sharedInstance()?.initSdk(config)   
         return true
+    }
+    
+    @objc func timer() {
     }
 
     // MARK: UISceneSession Lifecycle
@@ -62,12 +67,21 @@ extension AppDelegate: TIMConnListener {
 public extension TIMManager {
     
     private struct TIMConnectStatusHolder {
-        static var stutus:TIMConnectstatus = .connecting
+        static var connectStatusObservable =  ReplaySubject<TIMConnectstatus>.create(bufferSize: 1)
+        static var stutus:TIMConnectstatus = .connecting {
+            didSet { connectStatusObservable.onNext(stutus) }
+        }
     }
     
     var connectStatus: TIMConnectstatus {
         get { return TIMConnectStatusHolder.stutus }
         set { TIMConnectStatusHolder.stutus = newValue }
     }
+    
+    var connectStatusObservable:ReplaySubject<TIMConnectstatus> {
+        return TIMConnectStatusHolder.connectStatusObservable
+    }
 }
 
+public extension TIMManager {
+}

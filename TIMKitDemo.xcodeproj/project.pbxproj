@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8DC736055470ED93D96C25AB /* libPods-VoiceConverter.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 26D1AA42761ABDE7C0E6E47C /* libPods-VoiceConverter.a */; };
 		935B4BA138369F64464411A9 /* libPods-TIMKitDemo.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1885E51CEB11ADDEA3D5C01D /* libPods-TIMKitDemo.a */; };
 		94429CFD2351B8D900045E56 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94429CFC2351B8D900045E56 /* AppDelegate.swift */; };
 		94429CFF2351B8D900045E56 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94429CFE2351B8D900045E56 /* SceneDelegate.swift */; };
@@ -17,13 +18,77 @@
 		94429D172351C31100045E56 /* MessageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94429D162351C31100045E56 /* MessageViewController.swift */; };
 		94429D192351C8A200045E56 /* MessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94429D182351C8A200045E56 /* MessageCell.swift */; };
 		94429D1C2351CCD100045E56 /* Log.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94429D1B2351CCD100045E56 /* Log.swift */; };
+		946773B3235408770037D2C8 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773B2235408770037D2C8 /* BaseViewController.swift */; };
+		946773B5235409E70037D2C8 /* LoadingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773B4235409E70037D2C8 /* LoadingView.swift */; };
+		946773B723540BB30037D2C8 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773B623540BB30037D2C8 /* ChatViewController.swift */; };
+		946773B923540BF20037D2C8 /* MessageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773B823540BF20037D2C8 /* MessageInputView.swift */; };
+		946773BD23540D7B0037D2C8 /* MessageInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773BC23540D7B0037D2C8 /* MessageInputBar.swift */; };
+		946773BF235416000037D2C8 /* MessageInputMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773BE235416000037D2C8 /* MessageInputMenuView.swift */; };
+		946773C12354160D0037D2C8 /* MessageMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773C02354160D0037D2C8 /* MessageMenu.swift */; };
+		946773C32354163F0037D2C8 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773C22354163F0037D2C8 /* AudioRecorder.swift */; };
+		946773F9235451B40037D2C8 /* VoiceConverter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 946773F2235451B40037D2C8 /* VoiceConverter.framework */; };
+		946773FA235451B40037D2C8 /* VoiceConverter.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 946773F2235451B40037D2C8 /* VoiceConverter.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		94677401235451D70037D2C8 /* EMVoiceConverter.mm in Sources */ = {isa = PBXBuildFile; fileRef = 946773FF235451D70037D2C8 /* EMVoiceConverter.mm */; };
+		94677402235451D70037D2C8 /* EMVoiceConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 94677400235451D70037D2C8 /* EMVoiceConverter.h */; };
+		94677404235451E70037D2C8 /* VoiceConverter.h in Headers */ = {isa = PBXBuildFile; fileRef = 94677403235451E70037D2C8 /* VoiceConverter.h */; };
+		946774072354520B0037D2C8 /* wav.h in Headers */ = {isa = PBXBuildFile; fileRef = 946774052354520B0037D2C8 /* wav.h */; };
+		946774082354520B0037D2C8 /* wav.mm in Sources */ = {isa = PBXBuildFile; fileRef = 946774062354520B0037D2C8 /* wav.mm */; };
+		9467740D235452300037D2C8 /* amrFileCodec.mm in Sources */ = {isa = PBXBuildFile; fileRef = 9467740A2354522F0037D2C8 /* amrFileCodec.mm */; };
+		9467740F2354523B0037D2C8 /* dec_if.h in Headers */ = {isa = PBXBuildFile; fileRef = 9467740E2354523B0037D2C8 /* dec_if.h */; };
+		94677412235453FA0037D2C8 /* libopencore-amrnb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 94677410235453F90037D2C8 /* libopencore-amrnb.a */; };
+		94677413235453FA0037D2C8 /* libopencore-amrwb.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 94677411235453FA0037D2C8 /* libopencore-amrwb.a */; };
+		94677416235454740037D2C8 /* THelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 94677414235454740037D2C8 /* THelper.m */; };
+		94677419235463520037D2C8 /* GenerateTestUserSig.m in Sources */ = {isa = PBXBuildFile; fileRef = 94677417235463520037D2C8 /* GenerateTestUserSig.m */; };
+		9467741B235469C40037D2C8 /* RecorderError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9467741A235469C40037D2C8 /* RecorderError.swift */; };
+		9467743F235477BB0037D2C8 /* TIMKitDemoTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9467743E235477BB0037D2C8 /* TIMKitDemoTests.swift */; };
+		9471F00323548195004E595F /* AudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9471F00223548195004E595F /* AudioPlayer.swift */; };
+		9471F00623548FD7004E595F /* AudioRecordButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9471F00523548FD7004E595F /* AudioRecordButton.swift */; };
 		94AF30092351CF8400A776E0 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF30082351CF8400A776E0 /* Environment.swift */; };
 		94AF300B2351DD3D00A776E0 /* TIMConnectstatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */; };
+		94AF300D2351ED7600A776E0 /* MessageTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300C2351ED7600A776E0 /* MessageTableView.swift */; };
+		94AF300F2351EDFE00A776E0 /* MessageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300E2351EDFE00A776E0 /* MessageViewModel.swift */; };
+		BB2F8CDEE60ECCA3E875B631 /* libPods-TIMKitDemoTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 88BD02857579E5D0F3687AD6 /* libPods-TIMKitDemoTests.a */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		946773F7235451B40037D2C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 94429CF12351B8D900045E56 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 946773F1235451B40037D2C8;
+			remoteInfo = VoiceConverter;
+		};
+		94677441235477BB0037D2C8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 94429CF12351B8D900045E56 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 94429CF82351B8D900045E56;
+			remoteInfo = TIMKitDemo;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		946773FE235451B40037D2C8 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				946773FA235451B40037D2C8 /* VoiceConverter.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		0F31EF862A9442151C67255B /* Pods-TIMKitDemoTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TIMKitDemoTests.debug.xcconfig"; path = "Target Support Files/Pods-TIMKitDemoTests/Pods-TIMKitDemoTests.debug.xcconfig"; sourceTree = "<group>"; };
 		1885E51CEB11ADDEA3D5C01D /* libPods-TIMKitDemo.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TIMKitDemo.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		215928D7F86E73D60801D464 /* Pods-TIMKitDemo.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TIMKitDemo.release.xcconfig"; path = "Target Support Files/Pods-TIMKitDemo/Pods-TIMKitDemo.release.xcconfig"; sourceTree = "<group>"; };
+		26D1AA42761ABDE7C0E6E47C /* libPods-VoiceConverter.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-VoiceConverter.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		5A53A24E8B917CFA789CF8E4 /* Pods-VoiceConverter.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VoiceConverter.debug.xcconfig"; path = "Target Support Files/Pods-VoiceConverter/Pods-VoiceConverter.debug.xcconfig"; sourceTree = "<group>"; };
+		7B3AF437C9A7AC9419348DDD /* Pods-TIMKitDemoTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TIMKitDemoTests.release.xcconfig"; path = "Target Support Files/Pods-TIMKitDemoTests/Pods-TIMKitDemoTests.release.xcconfig"; sourceTree = "<group>"; };
+		88BD02857579E5D0F3687AD6 /* libPods-TIMKitDemoTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-TIMKitDemoTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		94429CF92351B8D900045E56 /* TIMKitDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TIMKitDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		94429CFC2351B8D900045E56 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		94429CFE2351B8D900045E56 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -36,9 +101,44 @@
 		94429D162351C31100045E56 /* MessageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewController.swift; sourceTree = "<group>"; };
 		94429D182351C8A200045E56 /* MessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageCell.swift; sourceTree = "<group>"; };
 		94429D1B2351CCD100045E56 /* Log.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Log.swift; sourceTree = "<group>"; };
+		946773B2235408770037D2C8 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
+		946773B4235409E70037D2C8 /* LoadingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingView.swift; sourceTree = "<group>"; };
+		946773B623540BB30037D2C8 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
+		946773B823540BF20037D2C8 /* MessageInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputView.swift; sourceTree = "<group>"; };
+		946773BC23540D7B0037D2C8 /* MessageInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputBar.swift; sourceTree = "<group>"; };
+		946773BE235416000037D2C8 /* MessageInputMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputMenuView.swift; sourceTree = "<group>"; };
+		946773C02354160D0037D2C8 /* MessageMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMenu.swift; sourceTree = "<group>"; };
+		946773C22354163F0037D2C8 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
+		946773F2235451B40037D2C8 /* VoiceConverter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VoiceConverter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		946773F5235451B40037D2C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		946773FF235451D70037D2C8 /* EMVoiceConverter.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = EMVoiceConverter.mm; sourceTree = "<group>"; };
+		94677400235451D70037D2C8 /* EMVoiceConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EMVoiceConverter.h; sourceTree = "<group>"; };
+		94677403235451E70037D2C8 /* VoiceConverter.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VoiceConverter.h; sourceTree = "<group>"; };
+		946774052354520B0037D2C8 /* wav.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = wav.h; sourceTree = "<group>"; };
+		946774062354520B0037D2C8 /* wav.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = wav.mm; sourceTree = "<group>"; };
+		946774092354522F0037D2C8 /* interf_enc.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = interf_enc.h; sourceTree = "<group>"; };
+		9467740A2354522F0037D2C8 /* amrFileCodec.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = amrFileCodec.mm; sourceTree = "<group>"; };
+		9467740B2354522F0037D2C8 /* amrFileCodec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = amrFileCodec.h; sourceTree = "<group>"; };
+		9467740C235452300037D2C8 /* interf_dec.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = interf_dec.h; sourceTree = "<group>"; };
+		9467740E2354523B0037D2C8 /* dec_if.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = dec_if.h; sourceTree = "<group>"; };
+		94677410235453F90037D2C8 /* libopencore-amrnb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrnb.a"; sourceTree = "<group>"; };
+		94677411235453FA0037D2C8 /* libopencore-amrwb.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = "libopencore-amrwb.a"; sourceTree = "<group>"; };
+		94677414235454740037D2C8 /* THelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = THelper.m; sourceTree = "<group>"; };
+		94677415235454740037D2C8 /* THelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = THelper.h; sourceTree = "<group>"; };
+		94677417235463520037D2C8 /* GenerateTestUserSig.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GenerateTestUserSig.m; sourceTree = "<group>"; };
+		94677418235463520037D2C8 /* GenerateTestUserSig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = GenerateTestUserSig.h; sourceTree = "<group>"; };
+		9467741A235469C40037D2C8 /* RecorderError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecorderError.swift; sourceTree = "<group>"; };
+		9467743C235477BB0037D2C8 /* TIMKitDemoTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TIMKitDemoTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9467743E235477BB0037D2C8 /* TIMKitDemoTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TIMKitDemoTests.swift; sourceTree = "<group>"; };
+		94677440235477BB0037D2C8 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		9471F00223548195004E595F /* AudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioPlayer.swift; sourceTree = "<group>"; };
+		9471F00523548FD7004E595F /* AudioRecordButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordButton.swift; sourceTree = "<group>"; };
 		94AF30082351CF8400A776E0 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TIMConnectstatus.swift; sourceTree = "<group>"; };
+		94AF300C2351ED7600A776E0 /* MessageTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableView.swift; sourceTree = "<group>"; };
+		94AF300E2351EDFE00A776E0 /* MessageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageViewModel.swift; sourceTree = "<group>"; };
 		B6D397BA90FEA01133DFACA2 /* Pods-TIMKitDemo.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-TIMKitDemo.debug.xcconfig"; path = "Target Support Files/Pods-TIMKitDemo/Pods-TIMKitDemo.debug.xcconfig"; sourceTree = "<group>"; };
+		F941C007363C9AE3FE740D65 /* Pods-VoiceConverter.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-VoiceConverter.release.xcconfig"; path = "Target Support Files/Pods-VoiceConverter/Pods-VoiceConverter.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -46,7 +146,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				946773F9235451B40037D2C8 /* VoiceConverter.framework in Frameworks */,
 				935B4BA138369F64464411A9 /* libPods-TIMKitDemo.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		946773EF235451B40037D2C8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				94677413235453FA0037D2C8 /* libopencore-amrwb.a in Frameworks */,
+				94677412235453FA0037D2C8 /* libopencore-amrnb.a in Frameworks */,
+				8DC736055470ED93D96C25AB /* libPods-VoiceConverter.a in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		94677439235477BB0037D2C8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				BB2F8CDEE60ECCA3E875B631 /* libPods-TIMKitDemoTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,6 +176,8 @@
 			isa = PBXGroup;
 			children = (
 				1885E51CEB11ADDEA3D5C01D /* libPods-TIMKitDemo.a */,
+				88BD02857579E5D0F3687AD6 /* libPods-TIMKitDemoTests.a */,
+				26D1AA42761ABDE7C0E6E47C /* libPods-VoiceConverter.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -65,6 +186,8 @@
 			isa = PBXGroup;
 			children = (
 				94429CFB2351B8D900045E56 /* TIMKitDemo */,
+				946773F3235451B40037D2C8 /* VoiceConverter */,
+				9467743D235477BB0037D2C8 /* TIMKitDemoTests */,
 				94429CFA2351B8D900045E56 /* Products */,
 				B94122ED042B78267D2FF493 /* Pods */,
 				6898BA7CF65F019E18B312FB /* Frameworks */,
@@ -75,6 +198,8 @@
 			isa = PBXGroup;
 			children = (
 				94429CF92351B8D900045E56 /* TIMKitDemo.app */,
+				946773F2235451B40037D2C8 /* VoiceConverter.framework */,
+				9467743C235477BB0037D2C8 /* TIMKitDemoTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -99,9 +224,23 @@
 		94429D102351B95A00045E56 /* TIMKitCustom */ = {
 			isa = PBXGroup;
 			children = (
+				9471F00423548FBF004E595F /* view */,
+				946773C523541A4D0037D2C8 /* tools */,
 				94429D162351C31100045E56 /* MessageViewController.swift */,
+				946773B2235408770037D2C8 /* BaseViewController.swift */,
+				946773B4235409E70037D2C8 /* LoadingView.swift */,
 				94429D182351C8A200045E56 /* MessageCell.swift */,
 				94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */,
+				94AF300C2351ED7600A776E0 /* MessageTableView.swift */,
+				94AF300E2351EDFE00A776E0 /* MessageViewModel.swift */,
+				946773B623540BB30037D2C8 /* ChatViewController.swift */,
+				946773BC23540D7B0037D2C8 /* MessageInputBar.swift */,
+				946773B823540BF20037D2C8 /* MessageInputView.swift */,
+				946773BE235416000037D2C8 /* MessageInputMenuView.swift */,
+				946773C02354160D0037D2C8 /* MessageMenu.swift */,
+				946773C22354163F0037D2C8 /* AudioRecorder.swift */,
+				9467741A235469C40037D2C8 /* RecorderError.swift */,
+				9471F00223548195004E595F /* AudioPlayer.swift */,
 			);
 			name = TIMKitCustom;
 			sourceTree = "<group>";
@@ -109,10 +248,58 @@
 		94429D1A2351CBA200045E56 /* tools */ = {
 			isa = PBXGroup;
 			children = (
+				94677418235463520037D2C8 /* GenerateTestUserSig.h */,
+				94677417235463520037D2C8 /* GenerateTestUserSig.m */,
 				94429D1B2351CCD100045E56 /* Log.swift */,
 				94AF30082351CF8400A776E0 /* Environment.swift */,
 			);
 			name = tools;
+			sourceTree = "<group>";
+		};
+		946773C523541A4D0037D2C8 /* tools */ = {
+			isa = PBXGroup;
+			children = (
+				94677415235454740037D2C8 /* THelper.h */,
+				94677414235454740037D2C8 /* THelper.m */,
+			);
+			name = tools;
+			sourceTree = "<group>";
+		};
+		946773F3235451B40037D2C8 /* VoiceConverter */ = {
+			isa = PBXGroup;
+			children = (
+				94677410235453F90037D2C8 /* libopencore-amrnb.a */,
+				94677411235453FA0037D2C8 /* libopencore-amrwb.a */,
+				9467740E2354523B0037D2C8 /* dec_if.h */,
+				9467740B2354522F0037D2C8 /* amrFileCodec.h */,
+				9467740A2354522F0037D2C8 /* amrFileCodec.mm */,
+				9467740C235452300037D2C8 /* interf_dec.h */,
+				946774092354522F0037D2C8 /* interf_enc.h */,
+				946774052354520B0037D2C8 /* wav.h */,
+				946774062354520B0037D2C8 /* wav.mm */,
+				94677403235451E70037D2C8 /* VoiceConverter.h */,
+				94677400235451D70037D2C8 /* EMVoiceConverter.h */,
+				946773FF235451D70037D2C8 /* EMVoiceConverter.mm */,
+				946773F5235451B40037D2C8 /* Info.plist */,
+			);
+			path = VoiceConverter;
+			sourceTree = "<group>";
+		};
+		9467743D235477BB0037D2C8 /* TIMKitDemoTests */ = {
+			isa = PBXGroup;
+			children = (
+				9467743E235477BB0037D2C8 /* TIMKitDemoTests.swift */,
+				94677440235477BB0037D2C8 /* Info.plist */,
+			);
+			path = TIMKitDemoTests;
+			sourceTree = "<group>";
+		};
+		9471F00423548FBF004E595F /* view */ = {
+			isa = PBXGroup;
+			children = (
+				9471F00523548FD7004E595F /* AudioRecordButton.swift */,
+			);
+			name = view;
 			sourceTree = "<group>";
 		};
 		B94122ED042B78267D2FF493 /* Pods */ = {
@@ -120,11 +307,29 @@
 			children = (
 				B6D397BA90FEA01133DFACA2 /* Pods-TIMKitDemo.debug.xcconfig */,
 				215928D7F86E73D60801D464 /* Pods-TIMKitDemo.release.xcconfig */,
+				0F31EF862A9442151C67255B /* Pods-TIMKitDemoTests.debug.xcconfig */,
+				7B3AF437C9A7AC9419348DDD /* Pods-TIMKitDemoTests.release.xcconfig */,
+				5A53A24E8B917CFA789CF8E4 /* Pods-VoiceConverter.debug.xcconfig */,
+				F941C007363C9AE3FE740D65 /* Pods-VoiceConverter.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		946773ED235451B40037D2C8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9467740F2354523B0037D2C8 /* dec_if.h in Headers */,
+				946774072354520B0037D2C8 /* wav.h in Headers */,
+				94677404235451E70037D2C8 /* VoiceConverter.h in Headers */,
+				94677402235451D70037D2C8 /* EMVoiceConverter.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
 		94429CF82351B8D900045E56 /* TIMKitDemo */ = {
@@ -136,15 +341,55 @@
 				94429CF62351B8D900045E56 /* Frameworks */,
 				94429CF72351B8D900045E56 /* Resources */,
 				770C47485DC0E7CA744E757C /* [CP] Embed Pods Frameworks */,
+				946773FE235451B40037D2C8 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				946773F8235451B40037D2C8 /* PBXTargetDependency */,
 			);
 			name = TIMKitDemo;
 			productName = TIMKitDemo;
 			productReference = 94429CF92351B8D900045E56 /* TIMKitDemo.app */;
 			productType = "com.apple.product-type.application";
+		};
+		946773F1235451B40037D2C8 /* VoiceConverter */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 946773FB235451B40037D2C8 /* Build configuration list for PBXNativeTarget "VoiceConverter" */;
+			buildPhases = (
+				857C23255620289D7B0DDFCC /* [CP] Check Pods Manifest.lock */,
+				946773ED235451B40037D2C8 /* Headers */,
+				946773EE235451B40037D2C8 /* Sources */,
+				946773EF235451B40037D2C8 /* Frameworks */,
+				946773F0235451B40037D2C8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = VoiceConverter;
+			productName = VoiceConverter;
+			productReference = 946773F2235451B40037D2C8 /* VoiceConverter.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		9467743B235477BB0037D2C8 /* TIMKitDemoTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 94677443235477BB0037D2C8 /* Build configuration list for PBXNativeTarget "TIMKitDemoTests" */;
+			buildPhases = (
+				D82A0FD093C419D9199C0D72 /* [CP] Check Pods Manifest.lock */,
+				94677438235477BB0037D2C8 /* Sources */,
+				94677439235477BB0037D2C8 /* Frameworks */,
+				9467743A235477BB0037D2C8 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				94677442235477BB0037D2C8 /* PBXTargetDependency */,
+			);
+			name = TIMKitDemoTests;
+			productName = TIMKitDemoTests;
+			productReference = 9467743C235477BB0037D2C8 /* TIMKitDemoTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
 
@@ -158,6 +403,13 @@
 				TargetAttributes = {
 					94429CF82351B8D900045E56 = {
 						CreatedOnToolsVersion = 11.0;
+					};
+					946773F1235451B40037D2C8 = {
+						CreatedOnToolsVersion = 11.0;
+					};
+					9467743B235477BB0037D2C8 = {
+						CreatedOnToolsVersion = 11.0;
+						TestTargetID = 94429CF82351B8D900045E56;
 					};
 				};
 			};
@@ -175,6 +427,8 @@
 			projectRoot = "";
 			targets = (
 				94429CF82351B8D900045E56 /* TIMKitDemo */,
+				946773F1235451B40037D2C8 /* VoiceConverter */,
+				9467743B235477BB0037D2C8 /* TIMKitDemoTests */,
 			);
 		};
 /* End PBXProject section */
@@ -187,6 +441,20 @@
 				94429D092351B8D900045E56 /* LaunchScreen.storyboard in Resources */,
 				94429D062351B8D900045E56 /* Assets.xcassets in Resources */,
 				94429D042351B8D900045E56 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		946773F0235451B40037D2C8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9467743A235477BB0037D2C8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,6 +476,28 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-TIMKitDemo/Pods-TIMKitDemo-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		857C23255620289D7B0DDFCC /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-VoiceConverter-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
 		B20137326C3353CAE5C99B97 /* [CP] Check Pods Manifest.lock */ = {
@@ -232,6 +522,28 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
+		D82A0FD093C419D9199C0D72 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-TIMKitDemoTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -240,17 +552,63 @@
 			buildActionMask = 2147483647;
 			files = (
 				94429D012351B8D900045E56 /* ViewController.swift in Sources */,
+				946773B923540BF20037D2C8 /* MessageInputView.swift in Sources */,
 				94AF300B2351DD3D00A776E0 /* TIMConnectstatus.swift in Sources */,
+				946773B3235408770037D2C8 /* BaseViewController.swift in Sources */,
+				94AF300F2351EDFE00A776E0 /* MessageViewModel.swift in Sources */,
+				94AF300D2351ED7600A776E0 /* MessageTableView.swift in Sources */,
+				946773B5235409E70037D2C8 /* LoadingView.swift in Sources */,
+				9471F00623548FD7004E595F /* AudioRecordButton.swift in Sources */,
+				946773BD23540D7B0037D2C8 /* MessageInputBar.swift in Sources */,
 				94429D1C2351CCD100045E56 /* Log.swift in Sources */,
+				94677416235454740037D2C8 /* THelper.m in Sources */,
+				946773C32354163F0037D2C8 /* AudioRecorder.swift in Sources */,
 				94429CFD2351B8D900045E56 /* AppDelegate.swift in Sources */,
+				946773BF235416000037D2C8 /* MessageInputMenuView.swift in Sources */,
+				9471F00323548195004E595F /* AudioPlayer.swift in Sources */,
+				94677419235463520037D2C8 /* GenerateTestUserSig.m in Sources */,
+				9467741B235469C40037D2C8 /* RecorderError.swift in Sources */,
 				94AF30092351CF8400A776E0 /* Environment.swift in Sources */,
+				946773B723540BB30037D2C8 /* ChatViewController.swift in Sources */,
 				94429D192351C8A200045E56 /* MessageCell.swift in Sources */,
 				94429D172351C31100045E56 /* MessageViewController.swift in Sources */,
+				946773C12354160D0037D2C8 /* MessageMenu.swift in Sources */,
 				94429CFF2351B8D900045E56 /* SceneDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		946773EE235451B40037D2C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9467740D235452300037D2C8 /* amrFileCodec.mm in Sources */,
+				946774082354520B0037D2C8 /* wav.mm in Sources */,
+				94677401235451D70037D2C8 /* EMVoiceConverter.mm in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		94677438235477BB0037D2C8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9467743F235477BB0037D2C8 /* TIMKitDemoTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		946773F8235451B40037D2C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 946773F1235451B40037D2C8 /* VoiceConverter */;
+			targetProxy = 946773F7235451B40037D2C8 /* PBXContainerItemProxy */;
+		};
+		94677442235477BB0037D2C8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 94429CF82351B8D900045E56 /* TIMKitDemo */;
+			targetProxy = 94677441235477BB0037D2C8 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		94429D022351B8D900045E56 /* Main.storyboard */ = {
@@ -392,6 +750,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = NWP5MRJALD;
 				INFOPLIST_FILE = TIMKitDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -403,6 +762,7 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "/Users/ryan/workspace/TIMKitDemo/TIMKitDemo/TIMKitDemo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7s armv7 arm64 arm64e";
 			};
 			name = Debug;
 		};
@@ -412,6 +772,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = NWP5MRJALD;
 				INFOPLIST_FILE = TIMKitDemo/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -423,6 +784,111 @@
 				SWIFT_OBJC_BRIDGING_HEADER = "/Users/ryan/workspace/TIMKitDemo/TIMKitDemo/TIMKitDemo-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
+				VALID_ARCHS = "armv7s armv7 arm64 arm64e";
+			};
+			name = Release;
+		};
+		946773FC235451B40037D2C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5A53A24E8B917CFA789CF8E4 /* Pods-VoiceConverter.debug.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = NWP5MRJALD;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = VoiceConverter/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/VoiceConverter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = info.windbird.VoiceConverter;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		946773FD235451B40037D2C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F941C007363C9AE3FE740D65 /* Pods-VoiceConverter.release.xcconfig */;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = NWP5MRJALD;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				INFOPLIST_FILE = VoiceConverter/Info.plist;
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				LIBRARY_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/VoiceConverter",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = info.windbird.VoiceConverter;
+				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
+				SKIP_INSTALL = YES;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		94677444235477BB0037D2C8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0F31EF862A9442151C67255B /* Pods-TIMKitDemoTests.debug.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NWP5MRJALD;
+				INFOPLIST_FILE = TIMKitDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = info.windbird.TIMKitDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TIMKitDemo.app/TIMKitDemo";
+			};
+			name = Debug;
+		};
+		94677445235477BB0037D2C8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 7B3AF437C9A7AC9419348DDD /* Pods-TIMKitDemoTests.release.xcconfig */;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = NWP5MRJALD;
+				INFOPLIST_FILE = TIMKitDemoTests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = info.windbird.TIMKitDemoTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/TIMKitDemo.app/TIMKitDemo";
 			};
 			name = Release;
 		};
@@ -443,6 +909,24 @@
 			buildConfigurations = (
 				94429D0E2351B8D900045E56 /* Debug */,
 				94429D0F2351B8D900045E56 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		946773FB235451B40037D2C8 /* Build configuration list for PBXNativeTarget "VoiceConverter" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				946773FC235451B40037D2C8 /* Debug */,
+				946773FD235451B40037D2C8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		94677443235477BB0037D2C8 /* Build configuration list for PBXNativeTarget "TIMKitDemoTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				94677444235477BB0037D2C8 /* Debug */,
+				94677445235477BB0037D2C8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

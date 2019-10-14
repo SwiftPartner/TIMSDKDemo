@@ -1,0 +1,42 @@
+//
+//  BaseViewController.swift
+//  TIMKitDemo
+//
+//  Created by ryan on 2019/10/14.
+//  Copyright © 2019 windbird. All rights reserved.
+//
+
+import UIKit
+import SnapKit
+
+public class BaseViewController: UIViewController {
+    
+    private weak var loadingView: LoadingView!
+    
+    public var showLoadingView = false {
+        didSet {
+            if showLoadingView {
+                let loadingView = LoadingView()
+                self.loadingView = loadingView
+                view.addSubview(loadingView)
+                loadingView.snp.makeConstraints { make in
+                    make.edges.equalTo(view)
+                }
+            } else {
+                loadingView.removeFromSuperview()
+                loadingView = nil
+            }
+        }
+    }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        if showLoadingView, let loadingView = self.loadingView {
+            view.bringSubviewToFront(loadingView)
+        }
+    }
+}
