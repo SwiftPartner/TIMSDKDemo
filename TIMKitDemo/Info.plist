@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+    <key>UIBackgroundModes</key>
+    <array>
+        <string>audio</string>
+    </array>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>${PRODUCT_NAME}提供了发送语音消息功能，只有在你授权麦克风权限，才能正常录制语音，请允许。</string>
 	<key>CFBundleDevelopmentRegion</key>

@@ -9,11 +9,14 @@
 import UIKit
 import RxSwift
 import coswift
+import IQKeyboardManagerSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
-
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        IQKeyboardManager.shared.enable = true
+        IQKeyboardManager.shared.enableAutoToolbar = false
         let config = TIMSdkConfig()
         config.sdkAppId = 1400255804
         config.disableLogPrint = !Environment.isDebug()
@@ -24,21 +27,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     @objc func timer() {
     }
-
+    
     // MARK: UISceneSession Lifecycle
-
+    
     func application(_ application: UIApplication, configurationForConnecting connectingSceneSession: UISceneSession, options: UIScene.ConnectionOptions) -> UISceneConfiguration {
         // Called when a new scene session is being created.
         // Use this method to select a configuration to create the new scene with.
         return UISceneConfiguration(name: "Default Configuration", sessionRole: connectingSceneSession.role)
     }
-
+    
     func application(_ application: UIApplication, didDiscardSceneSessions sceneSessions: Set<UISceneSession>) {
         // Called when the user discards a scene session.
         // If any sessions were discarded while the application was not running, this will be called shortly after application:didFinishLaunchingWithOptions.
         // Use this method to release any resources that were specific to the discarded scenes, as they will not return.
     }
-
+    
 }
 
 extension AppDelegate: TIMConnListener {
@@ -84,4 +87,55 @@ public extension TIMManager {
 }
 
 public extension TIMManager {
+    
+    func createGroup(groupInfo: TIMCreateGroupInfo) -> Promise<TICResult>{
+        let promise = Promise<TICResult>()
+        TIMGroupManager.sharedInstance()?.createGroup(groupInfo, succ: { group in
+            promise.fulfill(value: TICResult(code: 0, desc: "群组创建成功"))
+        }, fail: { (code, desc) in
+            if code == 10025 {
+                promise.fulfill(value: TICResult(code: 0, desc: "群组已存在，不需要再次创建"))
+            } else {
+                promise.fulfill(value: TICResult(code: code, desc: desc))
+            }
+        })
+        return promise
+    }
+    
+    func joinGroup(groupId: String) -> Promise<TICResult> {
+        let promise = Promise<TICResult>()
+        TIMGroupManager.sharedInstance()?.joinGroup(groupId, msg: "", succ: {
+            promise.fulfill(value: TICResult(code: 0, desc: "已加入群组"))
+        }, fail: { (code, desc) in
+            if code == 10013 {
+                promise.fulfill(value: TICResult(code: 0, desc: "已经在群组了，不需要再次申请"))
+            } else {
+                promise.fulfill(value: TICResult(code: code, desc: desc))
+            }
+        })
+        return promise
+    }
+    
+    func createAndJoinGroup(_ groupInfo: TIMCreateGroupInfo) -> Promise<TICResult> {
+        return createGroup(groupInfo: groupInfo).then { result -> Promise<TICResult> in
+            if result.isSuccess {
+                return self.joinGroup(groupId: groupInfo.group!)
+            }
+            let promise = Promise<TICResult>()
+            promise.fulfill(value: result)
+            return promise
+        }
+    }
+}
+
+extension TIMConversation {
+    func sendMessage(_ message: TIMMessage) -> Promise<TICResult> {
+        let promise = Promise<TICResult>()
+        send(message, succ: {
+            promise.fulfill(value: TICResult(code: 0, desc: "消息发送成功"))
+        }) { (code, desc) in
+            promise.fulfill(value: TICResult(code: code, desc: desc))
+        }
+        return promise
+    }
 }

@@ -8,6 +8,11 @@
 
 import UIKit
 
+@objc public protocol AudioRecordButtonDelegate {
+    @objc optional func onStartRecord(recordButton: AudioRecordButton);
+    @objc optional func onStopRecord(recordButton: AudioRecordButton);
+}
+
 public class AudioRecordButton: UIButton {
     
     public enum RecordMode: Int {
@@ -20,8 +25,7 @@ public class AudioRecordButton: UIButton {
             backgroundColor = isRecording ? .red : .green
         }
     }
-    public var onStart: (() -> Void)?
-    public var onStop: (() -> Void)?
+    public weak var delegate: AudioRecordButtonDelegate?
     
     public override init(frame: CGRect) {
         super.init(frame: frame)
@@ -51,18 +55,22 @@ public class AudioRecordButton: UIButton {
         if recordMode == .tapToRecord {
             return
         }
-        onStart?()
+        delegate?.onStartRecord?(recordButton: self)
         isRecording = true
     }
     
     @objc private func touchUpInside() {
         Log.i("抬起……")
         if recordMode == .tapToRecord, !isRecording {
-            onStart?()
+            delegate?.onStopRecord?(recordButton: self)
             isRecording = true
             return
         }
-        onStop?()
+        delegate?.onStopRecord?(recordButton: self)
+        isRecording = false
+    }
+    
+    public func stopRecord() {
         isRecording = false
     }
 }

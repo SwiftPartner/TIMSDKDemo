@@ -9,6 +9,8 @@ target 'TIMKitDemo' do
    pod 'RxCocoa', '~> 5'
    pod 'SnapKit'
    pod 'coswift'
+   pod 'IQKeyboardManagerSwift'
+   pod 'AliyunOSSiOS'
 
   # Pods for TIMKitDemo
 

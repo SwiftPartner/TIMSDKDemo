@@ -7,8 +7,34 @@
 //
 
 import UIKit
+import RxSwift
+import RxCocoa
+import SnapKit
 
-public class MessageInputBar: UIView {
+@objc public protocol MessageInputBarDelegate {
+    @objc optional func didEndEditing(text:String);
+    @objc optional func didClickVoiceButton();
+    @objc optional func didClickMoreButton();
+}
+
+public class MessageInputBar: UIView, UITextViewDelegate {
+
+    private weak var textField: UITextView?
+    private weak var voiceBtn: UIButton?
+    private weak var moreBtn: UIButton?
+    private weak var textViewHeight: SnapKit.Constraint!
+    public weak var delegate: MessageInputBarDelegate? {
+        didSet {
+            if let delegate = delegate {
+                if let _ = delegate.didClickVoiceButton {
+                    voiceBtn?.addTarget(delegate, action: #selector(delegate.didClickVoiceButton), for: .touchUpInside)
+                }
+                if let _ = delegate.didClickMoreButton {
+                    moreBtn?.addTarget(delegate, action: #selector(delegate.didClickMoreButton), for: .touchUpInside)
+                }
+            }
+        }
+    }
     
     public override init(frame: CGRect = .zero) {
         super.init(frame: frame)
@@ -19,8 +45,14 @@ public class MessageInputBar: UIView {
         setup()
     }
     
+    private(set) public lazy var textObservable: Observable<String>? = {
+        return textField?.rx.text.orEmpty.asObservable()
+    }()
+    
+    
     private func setup() {
         let voiceBtn = UIButton()
+        self.voiceBtn = voiceBtn
         voiceBtn.setContentHuggingPriority(.required, for: .horizontal)
         voiceBtn.setTitle("语音", for: .normal)
         addSubview(voiceBtn)
@@ -28,15 +60,28 @@ public class MessageInputBar: UIView {
             make.left.centerY.equalTo(self)
             make.width.equalTo(64)
         }
-        let textField = UITextField()
+        let textField = UITextView()
+        textField.layer.borderWidth = 1
+        textField.layer.cornerRadius = 6
+        textField.layer.borderColor = UIColor.white.cgColor
+        textField.backgroundColor = .groupColor
+        textField.layer.masksToBounds = true
+        self.textField = textField
+        textField.delegate = self
+        textField.returnKeyType = .send
+        textField.enablesReturnKeyAutomatically = true
         textField.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
-        textField.borderStyle = .roundedRect
         addSubview(textField)
         textField.snp.makeConstraints { make in
             make.left.equalTo(voiceBtn.snp.right)
-            make.centerY.equalTo(self)
+            let textViewHeight = make.height.equalTo(34).constraint
+            self.textViewHeight = textViewHeight
+            make.top.equalTo(self).offset(8)
+            make.bottom.equalTo(self).offset(-8)
         }
+        textField.sizeToFit()
         let moreBtn = UIButton()
+        self.moreBtn = moreBtn
         moreBtn.setTitle("更多", for: .normal)
         moreBtn.setContentHuggingPriority(.required, for: .horizontal)
         addSubview(moreBtn)
@@ -46,6 +91,24 @@ public class MessageInputBar: UIView {
             make.left.equalTo(textField.snp.right)
             make.right.equalTo(self)
         }
+    }
+    
+    public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+        if text == "\n" {
+            textView.resignFirstResponder()
+            return false
+        }
+        return true
+    }
+    
+    public func textViewDidEndEditing(_ textView: UITextView) {
+        delegate?.didEndEditing?(text: textView.text)
+    }
+    
+    public func textViewDidChange(_ textView: UITextView) {
+        let contentSize = textView.sizeThatFits(CGSize(width: textView.bounds.size.width, height: CGFloat(MAXFLOAT)))
+        textViewHeight.update(offset: contentSize.height)
+        layoutIfNeeded()
     }
 }
 

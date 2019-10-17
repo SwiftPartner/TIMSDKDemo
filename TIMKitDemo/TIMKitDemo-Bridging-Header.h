@@ -13,6 +13,7 @@
 // You will also need to set the Prefix Header build setting of one or more of your targets to reference this file.
 //#import <TXIMSDK_TUIKit_iOS/TUIKit.h>
 #import <ImSDK/ImSDK.h>
+#import <AliyunOSSiOS/AliyunOSSiOS.h>
 #import "THelper.h"
 #import "GenerateTestUserSig.h"
 

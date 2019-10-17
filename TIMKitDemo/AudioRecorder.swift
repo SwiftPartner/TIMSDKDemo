@@ -20,6 +20,7 @@ public class AudioRecorder: NSObject {
     /// 录制时间变化回调（总时间，剩余时间）-> Void
     public var onRecordTimeChanged: ((Int, Int) -> Void)?
     public var isRecording = false
+    private var isInterrupted = false
     
     init(voiceDirectory: URL, maxDuration: Int = 180) {
         self.maxDuration = maxDuration
@@ -40,11 +41,13 @@ public class AudioRecorder: NSObject {
                 return
         }
         if type == .began {
+            isInterrupted = true
             Log.i("停止录制……")
             pause()
         }
         if type == .ended, let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt {
             let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue)
+            isInterrupted = false
             if options.contains(.shouldResume) {
                 Log.i("恢复录制……")
                 recorder?.record()
@@ -109,6 +112,10 @@ public class AudioRecorder: NSObject {
     
     // MARK: 处理录制时间
     @objc private func recordTick(timer: Timer) {
+        if isInterrupted {
+            Log.i("录制被打断……")
+            return
+        }
         if let recorder = recorder {
             recorder.updateMeters()
             let power = recorder.averagePower(forChannel: 0)
