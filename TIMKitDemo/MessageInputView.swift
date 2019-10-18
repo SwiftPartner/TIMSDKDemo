@@ -11,7 +11,7 @@ import SnapKit
 
 @objc public protocol MessageInputViewDelegate {
     @objc optional func messageInputView(_ inutView: MessageInputView, didEndEditing text: String);
-
+    @objc optional func messageInputView(_ inputView: MessageInputView, didHeightChanged height: CGFloat)
 }
 
 public class MessageInputView: UIView, MessageInputBarDelegate {
@@ -20,10 +20,10 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
     private weak var audioInputView: UIView!
     public weak var auditionView: AuditionView!
     public weak var recordButton: AudioRecordButton!
+    public weak var timeLabel: UILabel!
     public weak var auditionViewDelegate: AuditionViewDelegate? {
         didSet {
             auditionView.delegate = auditionViewDelegate
-            
         }
     }
     public weak var delegate: MessageInputViewDelegate?
@@ -35,8 +35,11 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
     private var showAudioInutView: Bool = false {
         didSet {
             self.audioInputView.isHidden = !showAudioInutView
+            let height: CGFloat = showAudioInutView ? 140 : 0
+            self.delegate?.messageInputView?(self, didHeightChanged: height)
             UIView.animate(withDuration: 0.2, animations: { [weak self] in
                 self?.layoutIfNeeded()
+                self?.superview?.layoutIfNeeded()
             })
         }
     }
@@ -47,7 +50,7 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
             auditionView.isHidden = false
             let show = showAuditionView
             auditionView.alpha = show ? 0 : 1
-            UIView.animate(withDuration: 0.2, animations: { [weak self] in
+            UIView.animate(withDuration: 0.3, animations: { [weak self] in
                 self?.auditionView.alpha = show ? 1 : 0
                 self?.layoutIfNeeded()
             }, completion: { [weak self] _ in
@@ -67,6 +70,7 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
     }
     
     private func setup() {
+        backgroundColor = .groupColor
         let stackView = UIStackView()
         stackView.axis = .vertical
         addSubview(stackView)
@@ -76,14 +80,14 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
             make.height.greaterThanOrEqualTo(50)
         }
         let inputBar = MessageInputBar()
-        inputBar.backgroundColor = .gray
+//        inputBar.backgroundColor = .gray
         self.inputBar = inputBar
         inputBar.delegate = self
         stackView.addArrangedSubview(inputBar)
 
         let audioInputView = UIView()
         self.audioInputView = audioInputView
-        audioInputView.backgroundColor = .groupColor
+//        audioInputView.backgroundColor = .groupColor
         stackView.addArrangedSubview(audioInputView)
         audioInputView.snp.makeConstraints { make in
             make.left.right.equalTo(self)
@@ -91,6 +95,17 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
         }
         audioInputView.isHidden = true
         
+        let timeLabel = UILabel()
+        timeLabel.isHidden = true
+        timeLabel.text = "0/\(180)"
+        timeLabel.font = UIFont.systemFont(ofSize: 12)
+        audioInputView.addSubview(timeLabel)
+        self.timeLabel = timeLabel
+        timeLabel.snp.makeConstraints { make in
+            make.top.equalTo(audioInputView).offset(10)
+            make.centerX.equalTo(audioInputView)
+        }
+    
         let recordButton = AudioRecordButton()
         self.recordButton = recordButton
         recordButton.setup(recordMode: .tapToRecord)
@@ -140,6 +155,9 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
     
     // MARK: 关闭语音输入视图 & 更多视图，只显示MessageInputBar
     public func showInputBarOnly() {
+        if !showAudioInutView {
+            return
+        }
         showAudioInutView = false
     }
     

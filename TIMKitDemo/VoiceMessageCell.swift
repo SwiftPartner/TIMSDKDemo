@@ -19,14 +19,18 @@ public class VoiceMessageCell: MessageCell {
         }
     }
     
+    public var voiceContent: VoiceMessageContent! {
+        didSet {
+            playButton.setTitle("\(voiceContent.second)秒", for: .normal)
+        }
+    }
+    
     public var voiceWidth: CGFloat = 100 {
         didSet{
             if let palyButtonWidth = palyButtonWidth {
                 let voiceWidth = self.voiceWidth
-                UIView.animate(withDuration: 0.1) { [weak self] in
-                    palyButtonWidth.update(offset: voiceWidth)
-                    self?.layoutIfNeeded()
-                }
+                palyButtonWidth.update(offset: voiceWidth)
+//                layoutIfNeeded()
             }
         }
     }
@@ -43,12 +47,24 @@ public class VoiceMessageCell: MessageCell {
     
     private func setupSubviews() {
         let playButton = UIButton()
+        playButton.contentHorizontalAlignment = .left
         playButton.setImage(UIImage(systemName: "play.circle"), for: .normal)
         playButton.setImage(UIImage(systemName: "pause.circle"), for: .selected)
+        playButton.backgroundColor = bubbleColor
+        playButton.contentEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
+        playButton.setTitle("100s", for: .normal)
+        playButton.setTitleColor(.link, for: .normal)
+        playButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
+        self.playButton = playButton
         messageContentView.addSubview(playButton)
+        playButton.makeCorner(radius: 8)
         playButton.snp.makeConstraints { make in
             make.left.top.bottom.equalTo(messageContentView)
-            palyButtonWidth = make.width.equalTo(100).constraint
+//            make.height.equalTo(44)
+            palyButtonWidth = make.width.greaterThanOrEqualTo(100).constraint
+        }
+        revokeButton.snp.makeConstraints { make in
+            make.right.equalTo(playButton)
         }
     }
     

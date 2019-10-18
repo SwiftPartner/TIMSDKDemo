@@ -10,6 +10,8 @@ import Foundation
 
 public class Log {
     
+    private init(){}
+    
     private class func pretty(hearts:String = "💚💚💚", filename: String = #file, function : String = #function, line: Int = #line) -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"

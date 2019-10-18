@@ -25,7 +25,7 @@ public class MessageViewController: BaseViewController {
     
     private(set) public lazy var messages: Array<TIMMessage> = []
     public weak var delegate: MessageViewControllerDelegate?
-
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
         setupTableView()
@@ -37,19 +37,22 @@ public class MessageViewController: BaseViewController {
         self.tableView = tableView
         tableView.dataSource = self
         tableView.delegate = self
+        tableView.automaticallyAdjustsScrollIndicatorInsets = false
         tableView.keyboardDismissMode = .onDrag
         tableView.separatorStyle = .none
         tableView.estimatedRowHeight = 130
+        tableView.backgroundColor = .groupColor
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(TextMessageCell.self, forCellReuseIdentifier: textCellID)
         tableView.register(MessageCell.self, forCellReuseIdentifier: cellID)
+        tableView.register(VoiceMessageCell.self, forCellReuseIdentifier: voiceCellID)
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
             make.top.equalTo(self.view.safeAreaLayoutGuide.snp.top)
             make.bottom.equalTo(self.view.safeAreaLayoutGuide.snp.bottom)
         }
-//        showLoadingView = true
+        //        showLoadingView = true
     }
     
     /// 消息发送成功
@@ -74,10 +77,10 @@ public class MessageViewController: BaseViewController {
         scrollToBottom()
     }
     
-    private func scrollToBottom() {
+    public func scrollToBottom(animated: Bool = true) {
         if messages.count > 0 {
             let targetRow = IndexPath(row: messages.count - 1, section: 0)
-            tableView.scrollToRow(at: targetRow, at: .bottom, animated: true)
+            tableView.scrollToRow(at: targetRow, at: .bottom, animated: animated)
         }
     }
     
@@ -94,27 +97,39 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
     }
     
     public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        var cell: UITableViewCell!
         let message = messages[indexPath.row]
         if let _ = message.getElem(0) as? TIMTextElem {
             let textCell = tableView.dequeueReusableCell(withIdentifier: textCellID) as! TextMessageCell
             textCell.message = message
-            cell = textCell
-        } else if let voiceElem = message.getElem(0) as? TIMSoundElem {
+            return textCell
+        }
+        if let voiceElem = message.getElem(0) as? TIMSoundElem {
             let voiceCell = tableView.dequeueReusableCell(withIdentifier: voiceCellID) as! VoiceMessageCell
             voiceCell.message = message
             let ratio = CGFloat(voiceElem.second) / CGFloat(180)
             let messageContentWidth = UIScreen.main.bounds.size.width * CGFloat(0.65) - 44 - 16 * 2
             voiceCell.voiceWidth = messageContentWidth * ratio
-            cell = voiceCell
-        } else {
-            cell = tableView.dequeueReusableCell(withIdentifier: cellID) as! MessageCell
+            return voiceCell
         }
-        cell.selectionStyle = .none
+        if let customElem = message.getElem(0) as? TIMCustomElem {
+            let content = MessageContent(data: customElem.data!)
+            if let voiceContent = content as? VoiceMessageContent {
+                let voiceCell = tableView.dequeueReusableCell(withIdentifier: voiceCellID) as! VoiceMessageCell
+                voiceCell.message = message
+                voiceCell.voiceContent = voiceContent
+                let ratio = CGFloat(voiceContent.second) / CGFloat(180)
+                let messageContentWidth = UIScreen.main.bounds.size.width * CGFloat(0.65) - 44 - 16 * 2
+                let width = messageContentWidth * (ratio > 1 ? 1 : ratio)
+                voiceCell.voiceWidth = width < 100 ? 100 : width
+                return voiceCell
+            }
+        }
+        let cell = tableView.dequeueReusableCell(withIdentifier: cellID) as! MessageCell
         return cell
     }
     
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        delegate?.tableViewWillBeginDragging?(tableView)
     }
     
     

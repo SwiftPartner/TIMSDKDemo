@@ -24,8 +24,13 @@ class TIMKitDemoTests: XCTestCase {
         let n2 = ceil(2.0)
         let n3 = floor(3.4)
         print(n1, n2, n3)
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+        let data = "{}".data(using: .utf8)
+        if let voiceContent = VoiceMessageContent(data: data!) {
+            let json = voiceContent.jsonString()
+            Log.i("转换c成功", voiceContent, json)
+        } else {
+            Log.e("转换失败")
+        }
     }
 
     func testPerformanceExample() {

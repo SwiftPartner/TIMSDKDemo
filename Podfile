@@ -11,6 +11,8 @@ target 'TIMKitDemo' do
    pod 'coswift'
    pod 'IQKeyboardManagerSwift'
    pod 'AliyunOSSiOS'
+#   pod 'SwiftyJSON', '~> 4.0'
+   pod 'MJExtension'
 
   # Pods for TIMKitDemo
 

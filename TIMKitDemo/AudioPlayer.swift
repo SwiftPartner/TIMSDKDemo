@@ -88,8 +88,8 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
         timer?.invalidate()
         timer = nil
         if let isPlaying = self.player?.isPlaying, isPlaying {
-            delegate?.audioPlayerDidFinishPlaying?(player!, successfully: true)
             self.player?.stop()
+            delegate?.audioPlayerDidFinishPlaying?(player!, successfully: true)
         }
         isPlaying = false
     }

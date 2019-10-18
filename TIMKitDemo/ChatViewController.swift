@@ -48,6 +48,7 @@ public class ChatViewController: BaseViewController {
     private func loadMessage() {
         let conversation = TIMManager.sharedInstance()?.getConversation(.GROUP, receiver: "ap_10086")
         self.conversation = conversation
+        self.conversation.getReceiver()
         let lastMsg = conversation?.getLastMsg()
         conversation?.getMessage(10, last: lastMsg, succ: {[weak self] msgs in
             if let self = self, let msgs = msgs as? [TIMMessage] {
@@ -69,31 +70,27 @@ public class ChatViewController: BaseViewController {
         let textElem = TIMTextElem()
         textElem.text = text
         message.add(textElem)
-        co_launch { [weak self] in
-            if let conversation  = self?.conversation {
-                let resolution = try! await(promise: conversation.sendMessage(message))
-                if case .fulfilled(let result) = resolution {
-                    if result.isSuccess {
-                        self?.messageController.didSendMessage(message)
-                        Log.i("消息发送成功……")
-                    } else {
-                        Log.e("消息发送失败\(result)")
-                    }
-                }
-            }
-        }
-        self.conversation.send(message, succ: {
-            Log.i("文本消息发送成功……")
-        }) { (code, desc) in
-            Log.i("文本消息发送失败 \(code)  \(desc ?? "")")
-        }
+        messageController.didSendMessage(message)
     }
     
-    private func sendVoiceMessage() {
+    private func sendVoiceMessage(withFile url: URL) {
         let message = TIMMessage()
-        let voiceElem = TIMSoundElem()
-        //        voiceElem.second =
-        //        message.add(<#T##elem: TIMElem!##TIMElem!#>)
+        let asset = AVURLAsset(url: url)
+        let duration = Int(ceil(CMTimeGetSeconds(asset.duration) - 0.1))
+        do {
+            let atts = try FileManager.default.attributesOfItem(atPath: url.path)
+            let length = atts[.size] as! Int
+            let voiceJSON = VoiceMessageContent(dataSize: length, second: duration)
+            voiceJSON.path = url.path
+            let customElem = TIMCustomElem()
+            customElem.data = voiceJSON.jsonData()
+            message.add(customElem)
+            messageController.tableView.contentInset = .zero
+            messageController.scrollToBottom()
+            messageController.didSendMessage(message)
+        } catch (let error) {
+            Log.e("语音消息发送失败\(error)")
+        }
     }
     
     private func sendImageMsg() {
@@ -113,7 +110,7 @@ public class ChatViewController: BaseViewController {
         inputView.recordButtonDelegate = self
         inputView.auditionViewDelegate = self
         self.messageInputView = inputView
-        inputView.backgroundColor = .groupColor
+        //        inputView.backgroundColor = .groupColor
         inputView.delegate = self
         view.addSubview(inputView)
         inputView.snp.makeConstraints { make in
@@ -128,7 +125,7 @@ public class ChatViewController: BaseViewController {
         self.messageController = messageController
         addChild(messageController)
         view.addSubview(messageController.view)
-        messageController.view.setContentCompressionResistancePriority(.required, for: .vertical)
+        messageInputView.setContentCompressionResistancePriority(.required, for: .vertical)
         messageController.view.snp.makeConstraints { make in
             make.left.right.equalTo(view)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
@@ -144,6 +141,7 @@ public class ChatViewController: BaseViewController {
 
 extension ChatViewController: MessageViewControllerDelegate {
     public func tableViewWillBeginDragging(_ tableView: UITableView) {
+        view.endEditing(true)
         messageInputView.showInputBarOnly()
     }
 }
@@ -157,9 +155,14 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, A
             try audioRecorder.record()
             audioRecorder.onRecordTimeChanged = {[weak self] max, current in
                 Log.i("已经录制了\(current)秒，总共\(max)秒")
+                self?.messageInputView.timeLabel.text = "\(current)/\(max)s"
+                self?.messageInputView.timeLabel.isHidden = false
                 if current == max {
+                    self?.messageInputView.timeLabel.isHidden = true
                     self?.messageInputView.recordButton.stopRecord()
                     self?.messageInputView.showAuditionView = true
+                    let duration = self?.audioRecorder?.duration ?? 0
+                    self?.messageInputView.timeLabel.text = "\(duration)/\(max)s"
                 }
             }
             self.audioRecorder = audioRecorder
@@ -172,42 +175,80 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, A
         Log.i("停止录制音频……")
         if let audioRecorder = self.audioRecorder {
             audioRecorder.stop()
+            let duration = audioRecorder.duration ?? 0
+            messageInputView.timeLabel.text = "\(duration)/\(180)s"
             messageInputView.showAuditionView = true
         }
     }
     
     public func onClickPlayBtn(_ sender: UIButton, of auditionView: AuditionView) {
-        if !sender.isSelected, let voiceUrl = audioRecorder?.voiceURL {
+        guard let voiceUrl = audioRecorder?.voiceURL else {
+            return
+        }
+        if audioPlayer == nil {
             let audioPlayer = AudioPlayer(audioURL: voiceUrl)
             audioPlayer.delegate = self
-            do {
-                try audioPlayer.play()
-            } catch(let error) {
-                Log.e("音频播放失败\(error)")
-            }
+            self.audioPlayer = audioPlayer
         }
-        if sender.isSelected, let audioPlayer = audioPlayer {
-            audioPlayer.stop()
+        if audioPlayer!.isPlaying {
+            audioPlayer?.stop()
+            sender.isSelected = false
+            return
         }
-        sender.isSelected = !sender.isSelected
+        do {
+            try audioPlayer?.play()
+            sender.isSelected = true
+        } catch(let error) {
+            sender.isSelected = false
+            Log.e("音频播放失败\(error)")
+        }
     }
     
     public func onClickSendBtn(_ sender: UIButton, of auditionView: AuditionView) {
+        stopPlayAudio()
+        messageInputView.timeLabel.isHidden = true
+        messageInputView.timeLabel.text = "0/180s"
         messageInputView.showAuditionView = false
+        if let voiceURL = audioRecorder?.voiceURL {
+            sendVoiceMessage(withFile: voiceURL)
+        }
     }
     
     public func onClickDeleteBtn(_ sender: UIButton, of auditionView: AuditionView) {
+        stopPlayAudio()
         messageInputView.showAuditionView = false
+        messageInputView.timeLabel.isHidden = true
+        messageInputView.timeLabel.text = "0/\(180)s"
+        if let voiceURL = audioRecorder?.voiceURL {
+            do {
+                try FileManager.default.removeItem(at: voiceURL)
+            } catch(let error) {
+                Log.e("音频删除失败\(error)")
+            }
+        }
     }
     
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         Log.i("音频试听自动播放完毕……")
         messageInputView.auditionView.isPlaying = false
+        messageInputView.auditionView.playButton.isSelected = false
+    }
+    
+    private func stopPlayAudio() {
+        audioPlayer?.stop()
+        messageInputView.auditionView.playButton.isSelected = false
     }
 }
 
 extension ChatViewController: MessageInputViewDelegate {
     public func messageInputView(_ inutView: MessageInputView, didEndEditing text: String) {
         sendTextMsg(text: text)
+    }
+    
+    public func messageInputView(_ inputView: MessageInputView, didHeightChanged height: CGFloat) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {  [weak self] in
+            self?.messageController.scrollToBottom(animated: true)
+        }
+        Log.i("高度变化\(height)")
     }
 }

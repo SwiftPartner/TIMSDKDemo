@@ -22,6 +22,15 @@ public class AudioRecorder: NSObject {
     public var isRecording = false
     private var isInterrupted = false
     
+    public var duration: Int? {
+        if !isRecording, let voiceURL = voiceURL {
+            let asset = AVURLAsset(url: voiceURL)
+            let duration = Int(ceil(CMTimeGetSeconds(asset.duration) - 0.1))
+            return duration;
+        }
+        return nil
+    }
+    
     init(voiceDirectory: URL, maxDuration: Int = 180) {
         self.maxDuration = maxDuration
         if voiceDirectory.path.hasSuffix("/") {

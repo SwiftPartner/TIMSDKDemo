@@ -14,7 +14,7 @@
 //#import <TXIMSDK_TUIKit_iOS/TUIKit.h>
 #import <ImSDK/ImSDK.h>
 #import <AliyunOSSiOS/AliyunOSSiOS.h>
-#import "THelper.h"
-#import "GenerateTestUserSig.h"
+#import <MJExtension/MJExtension.h>
+#import "TIMKitDemo.h"
 
 #endif /* TIMKitDemo_Bridging_Header_pch */

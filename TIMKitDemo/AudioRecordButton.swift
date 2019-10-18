@@ -44,10 +44,7 @@ public class AudioRecordButton: UIButton {
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        layer.masksToBounds = true
-        layer.borderWidth = 3
-        layer.borderColor = UIColor.yellow.cgColor
-        layer.cornerRadius = bounds.size.width / 2
+        makeCorner(radius: width / 2, borderColor: .yellow, borderWidth: 3)
     }
     
     @objc private func touchDown() {
@@ -62,7 +59,7 @@ public class AudioRecordButton: UIButton {
     @objc private func touchUpInside() {
         Log.i("抬起……")
         if recordMode == .tapToRecord, !isRecording {
-            delegate?.onStopRecord?(recordButton: self)
+            delegate?.onStartRecord?(recordButton: self)
             isRecording = true
             return
         }

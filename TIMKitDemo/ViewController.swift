@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import coswift
 
 class ViewController: UIViewController, AudioRecordButtonDelegate {
     
@@ -141,8 +142,15 @@ class ViewController: UIViewController, AudioRecordButtonDelegate {
     }
     
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
-        let controller = MemoryTestViewController()
-        navigationController?.pushViewController(controller, animated: true)
+        co_launch {
+            let result = try await(promise: OSSManager.shared.fetchBucket(name: "windbird-voice"))
+            switch result {
+            case .fulfilled(let result):
+                Log.i("bucket获取成功\(result)")
+            case .rejected(let error):
+                Log.e("bucket获取失败\(error)")
+            }
+        }
     }
 }
 

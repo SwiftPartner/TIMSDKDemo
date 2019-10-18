@@ -19,6 +19,8 @@ public class MessageCell: UITableViewCell {
         }
     }
     
+    public var bubbleColor: UIColor = UIColor(red: 0.086, green: 0.616, blue: 0.455, alpha: 1)
+    
     public weak var avatarImageView: UIImageView!
     public weak var nicknameLabel: UILabel!
     public weak var roleLabel: UILabel!
@@ -33,21 +35,18 @@ public class MessageCell: UITableViewCell {
     
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
-    }
-    
-    override public func awakeFromNib() {
-        super.awakeFromNib()
         setup()
     }
 
     private func setup() {
+        backgroundColor = .groupColor
+        contentView.snp.setLabel("contentView")
+        selectionStyle = .none
         let avatarWidth = CGFloat(44)
         let avatarImageView = UIImageView()
         avatarImageView.image = UIImage(named: "yingmu")
-        avatarImageView.layer.cornerRadius = avatarWidth / CGFloat(2)
-        avatarImageView.layer.borderWidth = 1
-        avatarImageView.layer.borderColor = UIColor.gray.cgColor
-        avatarImageView.layer.masksToBounds = true
+        let avatarRadius = avatarWidth / CGFloat(2)
+        avatarImageView.makeCorner(radius: avatarRadius, borderColor: .gray, borderWidth: 1)
         contentView.addSubview(avatarImageView)
         avatarImageView.snp.makeConstraints { make in
             make.left.equalTo(contentView).offset(16)
@@ -56,6 +55,7 @@ public class MessageCell: UITableViewCell {
         }
         
         let nicknameLabel = UILabel()
+        nicknameLabel.snp.setLabel("nicknameLabel")
         nicknameLabel.font = UIFont.systemFont(ofSize: CGFloat(16))
         nicknameLabel.textColor = .black
         self.nicknameLabel = nicknameLabel
@@ -66,6 +66,7 @@ public class MessageCell: UITableViewCell {
         }
         
         let roleLabel = UILabel()
+        roleLabel.snp.setLabel("roleLabel")
         roleLabel.font = UIFont.systemFont(ofSize: CGFloat(12))
         roleLabel.textColor = .gray
         self.roleLabel = roleLabel
@@ -76,6 +77,7 @@ public class MessageCell: UITableViewCell {
         }
         
         let messageContentView = UIView()
+        messageContentView.snp.setLabel("messageContentView")
         self.messageContentView = messageContentView
         contentView.addSubview(messageContentView)
         let messageContentWidth = UIScreen.main.bounds.size.width * CGFloat(0.65) - 44 - 16 * 2
@@ -83,11 +85,12 @@ public class MessageCell: UITableViewCell {
             make.left.equalTo(nicknameLabel)
             make.top.equalTo(nicknameLabel.snp.bottom).offset(8)
             make.width.equalTo(messageContentWidth)
-            make.height.greaterThanOrEqualTo(44)
+            make.height.greaterThanOrEqualTo(44).priority(.required)
         }
-//        messageContentView.backgroundColor = .systemGroupedBackground
+//        messageContentView.backgroundColor = .red
         
         let likeButton = UIButton()
+        likeButton.snp.setLabel("likeButton")
         likeButton.setTitleColor(.gray, for: .normal)
         likeButton.setTitle("喜欢100", for: .normal)
         likeButton.titleLabel?.font = UIFont.systemFont(ofSize: 12)
@@ -96,9 +99,11 @@ public class MessageCell: UITableViewCell {
         likeButton.snp.makeConstraints { make in
             make.left.equalTo(nicknameLabel)
             make.top.equalTo(messageContentView.snp.bottom).offset(8)
+            make.bottom.equalTo(contentView).offset(-16)
         }
         
         let revokeButton = UIButton()
+        revokeButton.snp.setLabel("revokeButton")
         self.revokeButton = revokeButton
         revokeButton.setTitle("撤回", for: .normal)
         revokeButton.titleLabel?.font = UIFont.systemFont(ofSize: 12)
@@ -106,12 +111,10 @@ public class MessageCell: UITableViewCell {
         contentView.addSubview(revokeButton)
         revokeButton.snp.makeConstraints { make in
             make.top.equalTo(messageContentView.snp.bottom).offset(8)
-            make.bottom.equalTo(contentView).offset(-16)
         }
     }
     
     override public func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
     }
-
 }

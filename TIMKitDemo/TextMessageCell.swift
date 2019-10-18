@@ -37,13 +37,8 @@ public class TextMessageCell: MessageCell {
     
     func setupSubviews() {
         let contentLabelContainer = UIView()
-        contentLabelContainer.layer.cornerRadius = 8
-        contentLabelContainer.layer.masksToBounds = true
-        if #available(iOS 13.0, *) {
-            contentLabelContainer.backgroundColor = .systemGroupedBackground
-        } else {
-            contentLabelContainer.backgroundColor = .groupTableViewBackground
-        }
+        contentLabelContainer.makeCorner(radius: 8)
+        contentLabelContainer.backgroundColor = bubbleColor
         let contentLabel = UILabel()
         contentLabel.numberOfLines = 0
         self.contentLabel = contentLabel

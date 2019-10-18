@@ -51,7 +51,15 @@ public class MessageInputBar: UIView, UITextViewDelegate {
     
     
     private func setup() {
-        let voiceBtn = UIButton()
+        let dividerView = UIView()
+        dividerView.backgroundColor = #colorLiteral(red: 0.8, green: 0.8, blue: 0.8, alpha: 0.5401078345)
+        addSubview(dividerView)
+        dividerView.snp.makeConstraints { make in
+            make.left.right.top.equalTo(self)
+            make.height.equalTo(0.5)
+        }
+        backgroundColor = .white
+        let voiceBtn = UIButton(type: .system)
         self.voiceBtn = voiceBtn
         voiceBtn.setContentHuggingPriority(.required, for: .horizontal)
         voiceBtn.setTitle("语音", for: .normal)
@@ -61,11 +69,8 @@ public class MessageInputBar: UIView, UITextViewDelegate {
             make.width.equalTo(64)
         }
         let textField = UITextView()
-        textField.layer.borderWidth = 1
-        textField.layer.cornerRadius = 6
-        textField.layer.borderColor = UIColor.white.cgColor
         textField.backgroundColor = .groupColor
-        textField.layer.masksToBounds = true
+        textField.makeCorner(radius: 6, borderColor: .white, borderWidth: 1)
         self.textField = textField
         textField.delegate = self
         textField.returnKeyType = .send
@@ -80,7 +85,7 @@ public class MessageInputBar: UIView, UITextViewDelegate {
             make.bottom.equalTo(self).offset(-8)
         }
         textField.sizeToFit()
-        let moreBtn = UIButton()
+        let moreBtn = UIButton(type: .system)
         self.moreBtn = moreBtn
         moreBtn.setTitle("更多", for: .normal)
         moreBtn.setContentHuggingPriority(.required, for: .horizontal)

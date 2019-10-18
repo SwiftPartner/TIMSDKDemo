@@ -45,11 +45,9 @@ public class AuditionView: UIView {
         contentView.snp.makeConstraints { make in
             make.edges.equalTo(self)
         }
-        let cornerRadius = playButton.bounds.size.width / 2
-        playButton.layer.cornerRadius = cornerRadius
-        playButton.layer.borderWidth = 4
-        playButton.layer.borderColor = UIColor.link.cgColor
-        playButton.layer.masksToBounds = true
+        contentView.backgroundColor = .white
+        let cornerRadius = playButton.width / 2
+        playButton.makeCorner(radius: cornerRadius, borderColor: .link, borderWidth: 4)
     }
     
     public override func layoutSubviews() {
@@ -63,7 +61,7 @@ public class AuditionView: UIView {
     }
     
     @IBAction func onClickPlay(_ sender: UIButton) {
-        delegate?.onClickDeleteBtn?(sender, of: self)
+        delegate?.onClickPlayBtn?(sender, of: self)
     }
     
     @IBAction func onClickSend(_ sender: UIButton) {
