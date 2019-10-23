@@ -14,7 +14,8 @@ NS_ASSUME_NONNULL_BEGIN
 @interface MessageContent : NSObject
 
 @property(nonatomic, assign) MessageType type;
-
+@property(nonatomic, strong) NSNumber * _Nullable pptPage;
+@property(nonatomic, strong) NSNumber * _Nullable pptTotalPage;
 
 - (nullable instancetype)initWithJson:(NSString *)json;
 - (nullable instancetype)initWithData:(NSData *)data;

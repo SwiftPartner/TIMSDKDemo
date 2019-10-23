@@ -58,6 +58,15 @@
 		94A0FE51235D915C009F84C3 /* Environment.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF30082351CF8400A776E0 /* Environment.swift */; };
 		94A903FA235FE700007E54D3 /* EXVoiceMessageContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A903F9235FE700007E54D3 /* EXVoiceMessageContent.swift */; };
 		94A903FC235FEDEA007E54D3 /* EXMessage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A903FB235FEDEA007E54D3 /* EXMessage.swift */; };
+		94A90403236032AC007E54D3 /* ppt2.png in Resources */ = {isa = PBXBuildFile; fileRef = 94A903FE236032AC007E54D3 /* ppt2.png */; };
+		94A90404236032AC007E54D3 /* ppt3.png in Resources */ = {isa = PBXBuildFile; fileRef = 94A903FF236032AC007E54D3 /* ppt3.png */; };
+		94A90405236032AC007E54D3 /* ppt4.png in Resources */ = {isa = PBXBuildFile; fileRef = 94A90400236032AC007E54D3 /* ppt4.png */; };
+		94A90406236032AC007E54D3 /* ppt1.png in Resources */ = {isa = PBXBuildFile; fileRef = 94A90401236032AC007E54D3 /* ppt1.png */; };
+		94A90407236032AC007E54D3 /* ppt5.png in Resources */ = {isa = PBXBuildFile; fileRef = 94A90402236032AC007E54D3 /* ppt5.png */; };
+		94A90409236032F1007E54D3 /* CoursewareView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A90408236032F1007E54D3 /* CoursewareView.swift */; };
+		94A9040B23603505007E54D3 /* CoursewareCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A9040A23603505007E54D3 /* CoursewareCell.swift */; };
+		94A9040D23604CD2007E54D3 /* ChatSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A9040C23604CD2007E54D3 /* ChatSettingsView.swift */; };
+		94A9040F23605C70007E54D3 /* AudioRateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A9040E23605C70007E54D3 /* AudioRateView.swift */; };
 		94AF300B2351DD3D00A776E0 /* TIMConnectstatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */; };
 		94AF300D2351ED7600A776E0 /* MessageTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300C2351ED7600A776E0 /* MessageTableView.swift */; };
 		94C5396C2355592600D90C36 /* PlayerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C5396B2355592600D90C36 /* PlayerError.swift */; };
@@ -220,6 +229,15 @@
 		94A0FE45235D914F009F84C3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		94A903F9235FE700007E54D3 /* EXVoiceMessageContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EXVoiceMessageContent.swift; sourceTree = "<group>"; };
 		94A903FB235FEDEA007E54D3 /* EXMessage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EXMessage.swift; sourceTree = "<group>"; };
+		94A903FE236032AC007E54D3 /* ppt2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ppt2.png; sourceTree = "<group>"; };
+		94A903FF236032AC007E54D3 /* ppt3.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ppt3.png; sourceTree = "<group>"; };
+		94A90400236032AC007E54D3 /* ppt4.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ppt4.png; sourceTree = "<group>"; };
+		94A90401236032AC007E54D3 /* ppt1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ppt1.png; sourceTree = "<group>"; };
+		94A90402236032AC007E54D3 /* ppt5.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = ppt5.png; sourceTree = "<group>"; };
+		94A90408236032F1007E54D3 /* CoursewareView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursewareView.swift; sourceTree = "<group>"; };
+		94A9040A23603505007E54D3 /* CoursewareCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoursewareCell.swift; sourceTree = "<group>"; };
+		94A9040C23604CD2007E54D3 /* ChatSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatSettingsView.swift; sourceTree = "<group>"; };
+		94A9040E23605C70007E54D3 /* AudioRateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRateView.swift; sourceTree = "<group>"; };
 		94AF30082351CF8400A776E0 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TIMConnectstatus.swift; sourceTree = "<group>"; };
 		94AF300C2351ED7600A776E0 /* MessageTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableView.swift; sourceTree = "<group>"; };
@@ -363,6 +381,7 @@
 		94429CFB2351B8D900045E56 /* TIMKitDemo */ = {
 			isa = PBXGroup;
 			children = (
+				94A903FD23603299007E54D3 /* resources */,
 				94F1E7CD23583E02004E882E /* aliyun */,
 				94429D1A2351CBA200045E56 /* tools */,
 				94429D102351B95A00045E56 /* TIMKitCustom */,
@@ -467,6 +486,10 @@
 				94C539772355F56A00D90C36 /* AudioRecordView.swift */,
 				94F75E882356C92900D361DA /* AuditionView.swift */,
 				94F75E8A2356C94700D361DA /* AuditionView.xib */,
+				94A90408236032F1007E54D3 /* CoursewareView.swift */,
+				94A9040A23603505007E54D3 /* CoursewareCell.swift */,
+				94A9040C23604CD2007E54D3 /* ChatSettingsView.swift */,
+				94A9040E23605C70007E54D3 /* AudioRateView.swift */,
 			);
 			name = view;
 			sourceTree = "<group>";
@@ -482,6 +505,18 @@
 				94A0FE45235D914F009F84C3 /* Info.plist */,
 			);
 			path = CommonTools;
+			sourceTree = "<group>";
+		};
+		94A903FD23603299007E54D3 /* resources */ = {
+			isa = PBXGroup;
+			children = (
+				94A90401236032AC007E54D3 /* ppt1.png */,
+				94A903FE236032AC007E54D3 /* ppt2.png */,
+				94A903FF236032AC007E54D3 /* ppt3.png */,
+				94A90400236032AC007E54D3 /* ppt4.png */,
+				94A90402236032AC007E54D3 /* ppt5.png */,
+			);
+			name = resources;
 			sourceTree = "<group>";
 		};
 		94C5396D235571E100D90C36 /* messages */ = {
@@ -817,7 +852,12 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				94A90406236032AC007E54D3 /* ppt1.png in Resources */,
+				94A90405236032AC007E54D3 /* ppt4.png in Resources */,
+				94A90407236032AC007E54D3 /* ppt5.png in Resources */,
 				94429D092351B8D900045E56 /* LaunchScreen.storyboard in Resources */,
+				94A90403236032AC007E54D3 /* ppt2.png in Resources */,
+				94A90404236032AC007E54D3 /* ppt3.png in Resources */,
 				94F75E8B2356C94700D361DA /* AuditionView.xib in Resources */,
 				94429D062351B8D900045E56 /* Assets.xcassets in Resources */,
 				94429D042351B8D900045E56 /* Main.storyboard in Resources */,
@@ -1017,6 +1057,7 @@
 				94429D012351B8D900045E56 /* ViewController.swift in Sources */,
 				946773B923540BF20037D2C8 /* MessageInputView.swift in Sources */,
 				94AF300B2351DD3D00A776E0 /* TIMConnectstatus.swift in Sources */,
+				94A90409236032F1007E54D3 /* CoursewareView.swift in Sources */,
 				946773B3235408770037D2C8 /* BaseViewController.swift in Sources */,
 				94F1E7E7235879A7004E882E /* MessageContent.m in Sources */,
 				94CEE534235DA0760040A4AC /* TIMExtension.swift in Sources */,
@@ -1031,6 +1072,7 @@
 				94F75E93235700CE00D361DA /* Pathes.swift in Sources */,
 				94677416235454740037D2C8 /* THelper.m in Sources */,
 				94C5396C2355592600D90C36 /* PlayerError.swift in Sources */,
+				94A9040B23603505007E54D3 /* CoursewareCell.swift in Sources */,
 				94A903FC235FEDEA007E54D3 /* EXMessage.swift in Sources */,
 				94CB51C1235F01E2001F7CF3 /* VoiceMessageAudioPlayer.swift in Sources */,
 				946773C32354163F0037D2C8 /* AudioRecorder.swift in Sources */,
@@ -1060,9 +1102,11 @@
 				94429D192351C8A200045E56 /* MessageCell.swift in Sources */,
 				94429D172351C31100045E56 /* MessageViewController.swift in Sources */,
 				946773C12354160D0037D2C8 /* MessageMenu.swift in Sources */,
+				94A9040D23604CD2007E54D3 /* ChatSettingsView.swift in Sources */,
 				94F1E7D923585849004E882E /* OSSUploader.swift in Sources */,
 				94429CFF2351B8D900045E56 /* SceneDelegate.swift in Sources */,
 				94F1E7D7235852C5004E882E /* OSSError.swift in Sources */,
+				94A9040F23605C70007E54D3 /* AudioRateView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

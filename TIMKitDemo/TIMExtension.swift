@@ -9,23 +9,23 @@
 import Foundation
 
 public extension TIMMessage {
-    
+
     private struct TIMMessageHolder {
         public static var content = [String: MessageContent]()
         public static var loading = [String: Bool]()
     }
-    
+
     var content: MessageContent? {
-        set{
+        set {
             TIMMessageHolder.content[msgId()] = newValue
         }
-        get{
+        get {
             return TIMMessageHolder.content[msgId()]
         }
     }
-    
+
     var isUploading: Bool {
-        set{
+        set {
             TIMMessageHolder.loading[msgId()] = newValue
         }
         get {

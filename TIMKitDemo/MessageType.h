@@ -14,7 +14,8 @@ typedef NS_ENUM(NSInteger, MessageType) {
     MessageTypeText,
     MessageTypeImage,
     MessageTypeVoice,
-    MessageTypeVideo
+    MessageTypeVideo,
+    MessageTypeUnknow
 };
 
 #endif /* MessageType_h */

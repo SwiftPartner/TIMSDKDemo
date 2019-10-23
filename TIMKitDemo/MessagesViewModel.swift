@@ -83,4 +83,18 @@ public class MessagesViewModel {
         uploader.delegate = uploadDelegate
         return uploader.upload()
     }
+
+    public func voiceMessage(after message: TIMMessage) -> TIMMessage? {
+        guard let index = messages.firstIndex(of: message) else {
+            return nil
+        }
+        guard index + 1 < messages.count else {
+            return nil
+        }
+        let message = messages[index + 1]
+        if message.content?.type == MessageType.voice {
+            return message
+        }
+        return voiceMessage(after: message)
+    }
 }

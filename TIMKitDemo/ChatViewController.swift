@@ -15,6 +15,7 @@ import COSwiftExtension
 
 public class ChatViewController: BaseViewController {
 
+    private weak var coursewareView: CoursewareView!
     private weak var messageController: MessageViewController!
     private weak var messageInputView: MessageInputView!
     private var conversation: TIMConversation
@@ -35,9 +36,31 @@ public class ChatViewController: BaseViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .groupColor
+        addCoursewareView()
         addMessageInputView()
         addMessagesView()
-//        showLoadingView = true
+        coursewareView.makeShadow()
+        view.bringSubviewToFront(coursewareView)
+        
+        
+        
+        let audioRateView = AudioRateView()
+        audioRateView.delegate = self
+        audioRateView.backgroundColor = .white
+        audioRateView.makeCorner(radius: 22)
+        view.addSubview(audioRateView)
+        audioRateView.snp.makeConstraints { make in
+            make.right.centerY.equalTo(view)
+        }
+    }
+
+    public func sendMessage(msgContent: MessageContent) {
+        msgContent.pptPage = NSNumber(value: coursewareView.currentPage)
+        msgContent.pptTotalPage = NSNumber(value: coursewareView.totalPage)
+        let message = TIMMessage.message(content: msgContent)
+        messageController.tableView.contentInset = .zero
+        messageController.scrollToBottom()
+        messageController.didSendMessage(message)
     }
 
     // MARK: 文本消息输入完成，发送文本消息
@@ -46,30 +69,18 @@ public class ChatViewController: BaseViewController {
             Log.i("输入的内容为空，不发送消息")
             return
         }
-        let message = TIMMessage()
-        let textElem = TIMCustomElem()
         let textContent = TextMessageContent(text: text)
-        textElem.data = textContent.jsonData()
-        message.add(textElem)
-        messageController.didSendMessage(message)
+        sendMessage(msgContent: textContent)
     }
 
     // MARK: 发送语音消息
     private func sendVoiceMessage(withFile url: URL) {
-        if let voiceJSON = VoiceMessageContent.messageContent(voiceLoalUrl: url) {
-            let message = TIMMessage()
-            let customElem = TIMCustomElem()
-            customElem.data = voiceJSON.jsonData()
-            message.add(customElem)
-            messageController.tableView.contentInset = .zero
-            messageController.scrollToBottom()
-            messageController.didSendMessage(message)
+        if let messageContent = VoiceMessageContent.messageContent(voiceLoalUrl: url) {
+            sendMessage(msgContent: messageContent)
             return
         }
         Log.e("语音消息发送失败")
     }
-
-
 
     // MARK: 发送图片消息
     private func sendImageMsg() {
@@ -81,6 +92,20 @@ public class ChatViewController: BaseViewController {
             Log.i("图片消息发送成功……")
         }) { (code, desc) in
             Log.i("图片消息发送失败\(code) \(desc ?? "")")
+        }
+    }
+
+    // MARK: UI搭建 - 课件视图
+    private func addCoursewareView() {
+        let frame = CGRect(x: 0, y: 0, width: view.width, height: view.width * 0.75)
+        let coursewareView = CoursewareView(frame: frame)
+        coursewareView.collectionView?.backgroundColor = .white
+        self.coursewareView = coursewareView
+        view.addSubview(coursewareView)
+        coursewareView.snp.makeConstraints { make in
+            make.left.right.equalTo(view)
+            make.height.equalTo(coursewareView.snp.width).multipliedBy(0.75)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
     }
 
@@ -109,7 +134,7 @@ public class ChatViewController: BaseViewController {
         messageInputView.setContentCompressionResistancePriority(.required, for: .vertical)
         messageController.view.snp.makeConstraints { make in
             make.left.right.equalTo(view)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
+            make.top.equalTo(coursewareView.snp.bottom)
             make.bottom.equalTo(messageInputView.snp.top)
         }
         messageController.didMove(toParent: self)
@@ -125,6 +150,15 @@ extension ChatViewController: MessageViewControllerDelegate {
     public func tableViewWillBeginDragging(_ tableView: UITableView) {
         view.endEditing(true)
         messageInputView.showInputBarOnly()
+    }
+
+    public func didSelectMessage(_ message: TIMMessage) {
+        guard let page = message.content?.pptPage?.intValue else {
+            Log.i("当前消息未关联课件")
+            return
+        }
+        Log.i("滚动到课件的第\(page)页")
+        coursewareView.scrollTo(page: page)
     }
 }
 
@@ -263,5 +297,12 @@ extension ChatViewController: MessageInputViewDelegate {
             self?.messageController.scrollToBottom(animated: true)
         }
         Log.i("高度变化\(height)")
+    }
+}
+
+extension ChatViewController: AudioRateViewDelegate {
+    
+    public func audioRateView(_ rateView: AudioRateView, didSelectRate rate: Double) {
+        
     }
 }
