@@ -9,4 +9,5 @@
 import Foundation
 enum OSSError: Error {
     case unknow
+    case invalidateObjectKey
 }

@@ -27,7 +27,10 @@ public class LoadingView: UIView {
     }
     
     private func setup() {
-        let indicatorView = UIActivityIndicatorView()
+        let indicatorView = UIActivityIndicatorView(style: .medium)
+        indicatorView.color = .red
+        indicatorView.isHidden = false
+        indicatorView.startAnimating()
         self.indicatorView = indicatorView
         addSubview(indicatorView)
         indicatorView.snp.makeConstraints { make in

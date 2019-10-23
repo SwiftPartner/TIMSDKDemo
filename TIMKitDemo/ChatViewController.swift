@@ -10,56 +10,36 @@ import Foundation
 import SnapKit
 import coswift
 import AVFoundation
+import CommonTools
+import COSwiftExtension
 
 public class ChatViewController: BaseViewController {
-    
+
     private weak var messageController: MessageViewController!
     private weak var messageInputView: MessageInputView!
-    private var conversation: TIMConversation!
+    private var conversation: TIMConversation
     private var audioRecorder: AudioRecorder?
     private var audioPlayer: AudioPlayer?
-    
+    private var auditionVoiceUrl: URL?
+    private var sendingMessage: TIMMessage?
+
+    public init(conversation: TIMConversation) {
+        self.conversation = conversation
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
     public override func viewDidLoad() {
         super.viewDidLoad()
-        if #available(iOS 13.0, *) {
-            view.backgroundColor = .systemGroupedBackground
-        } else {
-            view.backgroundColor = .groupTableViewBackground
-        }
+        view.backgroundColor = .groupColor
         addMessageInputView()
         addMessagesView()
-        co_launch { [weak self] in
-            if let self = self {
-                let groupInfo = TIMCreateGroupInfo()
-                groupInfo.groupType = "Public"
-                groupInfo.group = "ap_10086"
-                groupInfo.groupName = "10086"
-                let resolution = try! await(promise: TIMManager.sharedInstance()!.createGroup(groupInfo: groupInfo))
-                if case .fulfilled(let result) = resolution {
-                    Log.i("进入群组结果：", result)
-                    if result.isSuccess {
-                        self.loadMessage()
-                    }
-                }
-            }
-        }
+//        showLoadingView = true
     }
-    
-    private func loadMessage() {
-        let conversation = TIMManager.sharedInstance()?.getConversation(.GROUP, receiver: "ap_10086")
-        self.conversation = conversation
-        self.conversation.getReceiver()
-        let lastMsg = conversation?.getLastMsg()
-        conversation?.getMessage(10, last: lastMsg, succ: {[weak self] msgs in
-            if let self = self, let msgs = msgs as? [TIMMessage] {
-                self.messageController.appendMessages(msgs)
-            }
-            Log.i("获取到了会话列表……")
-            }, fail: { (code, desc) in
-                Log.i("会话列表获取失败\(code) \(desc ?? "")")
-        })
-    }
-    
+
     // MARK: 文本消息输入完成，发送文本消息
     private func sendTextMsg(text: String) {
         if text.trimmingCharacters(in: [" ", "\n", "\t"]).count == 0 {
@@ -67,32 +47,31 @@ public class ChatViewController: BaseViewController {
             return
         }
         let message = TIMMessage()
-        let textElem = TIMTextElem()
-        textElem.text = text
+        let textElem = TIMCustomElem()
+        let textContent = TextMessageContent(text: text)
+        textElem.data = textContent.jsonData()
         message.add(textElem)
         messageController.didSendMessage(message)
     }
-    
+
+    // MARK: 发送语音消息
     private func sendVoiceMessage(withFile url: URL) {
-        let message = TIMMessage()
-        let asset = AVURLAsset(url: url)
-        let duration = Int(ceil(CMTimeGetSeconds(asset.duration) - 0.1))
-        do {
-            let atts = try FileManager.default.attributesOfItem(atPath: url.path)
-            let length = atts[.size] as! Int
-            let voiceJSON = VoiceMessageContent(dataSize: length, second: duration)
-            voiceJSON.path = url.path
+        if let voiceJSON = VoiceMessageContent.messageContent(voiceLoalUrl: url) {
+            let message = TIMMessage()
             let customElem = TIMCustomElem()
             customElem.data = voiceJSON.jsonData()
             message.add(customElem)
             messageController.tableView.contentInset = .zero
             messageController.scrollToBottom()
             messageController.didSendMessage(message)
-        } catch (let error) {
-            Log.e("语音消息发送失败\(error)")
+            return
         }
+        Log.e("语音消息发送失败")
     }
-    
+
+
+
+    // MARK: 发送图片消息
     private func sendImageMsg() {
         let imageElem = TIMImageElem()
         imageElem.path = ""
@@ -104,7 +83,8 @@ public class ChatViewController: BaseViewController {
             Log.i("图片消息发送失败\(code) \(desc ?? "")")
         }
     }
-    
+
+    // MARK:  UI搭建 - 消息输入视图
     private func addMessageInputView() {
         let inputView = MessageInputView()
         inputView.recordButtonDelegate = self
@@ -118,9 +98,10 @@ public class ChatViewController: BaseViewController {
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottom)
         }
     }
-    
+    // MARK: UI搭建 - 消息列表视图
     private func addMessagesView() {
-        let messageController = MessageViewController()
+        let conversation = TIMManager.sharedInstance()!.getConversation(.GROUP, receiver: "ap_10086")
+        let messageController = MessageViewController(conversation: conversation!)
         messageController.delegate = self
         self.messageController = messageController
         addChild(messageController)
@@ -133,12 +114,13 @@ public class ChatViewController: BaseViewController {
         }
         messageController.didMove(toParent: self)
     }
-    
+
     deinit {
         Log.w("页面关闭了……")
     }
 }
 
+// MARK: 消息列表控制器回调
 extension ChatViewController: MessageViewControllerDelegate {
     public func tableViewWillBeginDragging(_ tableView: UITableView) {
         view.endEditing(true)
@@ -146,14 +128,16 @@ extension ChatViewController: MessageViewControllerDelegate {
     }
 }
 
-extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, AVAudioPlayerDelegate{
-    
+// MARK: 音频试听回调、录音按钮点击事件回调、音频播放回调
+extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, VoiceMessagePlayerListener {
+
     public func onStartRecord(recordButton: AudioRecordButton) {
         Log.i("开始录制音频……")
+        VoiceMessagePlayer.shared.stopPlaying()
         let audioRecorder = AudioRecorder(voiceDirectory: .voiceDirectory, maxDuration: 180)
         do {
             try audioRecorder.record()
-            audioRecorder.onRecordTimeChanged = {[weak self] max, current in
+            audioRecorder.onRecordTimeChanged = { [weak self] max, current in
                 Log.i("已经录制了\(current)秒，总共\(max)秒")
                 self?.messageInputView.timeLabel.text = "\(current)/\(max)s"
                 self?.messageInputView.timeLabel.isHidden = false
@@ -170,7 +154,7 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, A
             Log.e("音频录制失败\(error)")
         }
     }
-    
+    // MARK: 停止播放音频
     public func onStopRecord(recordButton: AudioRecordButton) {
         Log.i("停止录制音频……")
         if let audioRecorder = self.audioRecorder {
@@ -180,40 +164,43 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, A
             messageInputView.showAuditionView = true
         }
     }
-    
+    // MARK: 播放音频（试听）
     public func onClickPlayBtn(_ sender: UIButton, of auditionView: AuditionView) {
-        guard let voiceUrl = audioRecorder?.voiceURL else {
+        guard let voiceUrl = audioRecorder?.voiceURL, let voiceContent = VoiceMessageContent.messageContent(voiceLoalUrl: voiceUrl) else {
+            Log.e("无效的音频文件")
             return
         }
-        if audioPlayer == nil {
-            let audioPlayer = AudioPlayer(audioURL: voiceUrl)
-            audioPlayer.delegate = self
-            self.audioPlayer = audioPlayer
+        let voicePlayer = VoiceMessagePlayer.shared
+        voicePlayer.addListener(self)
+        if (auditionVoiceUrl != voiceUrl && voicePlayer.isPlaying) || voicePlayer.message != sendingMessage {
+            voicePlayer.stopPlaying()
         }
-        if audioPlayer!.isPlaying {
-            audioPlayer?.stop()
-            sender.isSelected = false
-            return
+        if auditionVoiceUrl == nil || auditionVoiceUrl != voiceUrl {
+            let message = TIMMessage.message(content: voiceContent)
+            sendingMessage = message
         }
-        do {
-            try audioPlayer?.play()
-            sender.isSelected = true
-        } catch(let error) {
-            sender.isSelected = false
-            Log.e("音频播放失败\(error)")
+        if voicePlayer.isPlaying {
+            Log.i("停止播放试听音频……")
+            voicePlayer.stopPlaying()
+        } else {
+            Log.i("开始播放试听音频……")
+            voicePlayer.playVoiceMessage(sendingMessage!)
         }
     }
-    
+    // MARK: 发送音频
     public func onClickSendBtn(_ sender: UIButton, of auditionView: AuditionView) {
         stopPlayAudio()
         messageInputView.timeLabel.isHidden = true
         messageInputView.timeLabel.text = "0/180s"
         messageInputView.showAuditionView = false
         if let voiceURL = audioRecorder?.voiceURL {
-            sendVoiceMessage(withFile: voiceURL)
+            DispatchQueue.main.async {
+                self.sendVoiceMessage(withFile: voiceURL)
+            }
         }
     }
-    
+
+    // MARK: 删除音频
     public func onClickDeleteBtn(_ sender: UIButton, of auditionView: AuditionView) {
         stopPlayAudio()
         messageInputView.showAuditionView = false
@@ -227,26 +214,52 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, A
             }
         }
     }
-    
+
+    public func onPlayingVoiceMessageStatusChanged(_ status: VoiceMessagePlayStatus, message: TIMMessage) {
+        if message != self.sendingMessage {
+            Log.i("不是试听音频事件，不处理")
+            return
+        }
+        switch status {
+        case .startPlaying:
+            auditionVoiceUrl = audioRecorder?.voiceURL
+            Log.i("开始播放试听音频")
+            messageInputView.auditionView.isPlaying = true
+        case .downloading(let progress, let totalProgress):
+            Log.i("试听音频下载进度\(progress) \(totalProgress)")
+        case .stop:
+            Log.i("试听音频播放结束")
+            messageInputView.auditionView.isPlaying = false
+        case .error(let error):
+            Log.e("试听音频播放失败\(error)")
+            messageInputView.auditionView.playButton.isSelected = false
+        case .playProgress(let current, let duration):
+            break
+//            Log.i("试听音频播放进度\(current)  \(duration)")
+
+        }
+    }
+
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         Log.i("音频试听自动播放完毕……")
         messageInputView.auditionView.isPlaying = false
         messageInputView.auditionView.playButton.isSelected = false
     }
-    
+
     private func stopPlayAudio() {
-        audioPlayer?.stop()
-        messageInputView.auditionView.playButton.isSelected = false
+        VoiceMessagePlayer.shared.stopPlaying()
     }
 }
 
+// MARK: 消息输入视图回调
 extension ChatViewController: MessageInputViewDelegate {
-    public func messageInputView(_ inutView: MessageInputView, didEndEditing text: String) {
+    public func messageInputView(_ inputView: MessageInputView, didEndEditing text: String) {
         sendTextMsg(text: text)
+        inputView.resetText("")
     }
-    
+
     public func messageInputView(_ inputView: MessageInputView, didHeightChanged height: CGFloat) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {  [weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) { [weak self] in
             self?.messageController.scrollToBottom(animated: true)
         }
         Log.i("高度变化\(height)")

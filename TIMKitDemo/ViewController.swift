@@ -8,8 +8,9 @@
 
 import UIKit
 import coswift
+import CommonTools
 
-class ViewController: UIViewController, AudioRecordButtonDelegate {
+class ViewController: BaseViewController, AudioRecordButtonDelegate {
     
     private var recorder: AudioRecorder?
     private weak var recordBtn: UIButton?
@@ -36,8 +37,41 @@ class ViewController: UIViewController, AudioRecordButtonDelegate {
     }
     
     @objc private func joinChatRoom() {
-        let chatController = ChatViewController()
-        navigationController?.pushViewController(chatController, animated: true)
+        showLoadingView = true
+        let groupInfo = TIMCreateGroupInfo()
+        groupInfo.group = "ap_10086"
+        groupInfo.groupName = "10086"
+        groupInfo.groupType = "Public"
+        co_launch { [weak self] in
+            defer { self?.showLoadingView = false}
+            guard let imManager = TIMManager.sharedInstance() else { return }
+            let createGroupResult = try! await(promise: imManager.createAndJoinGroup(groupInfo))
+            if case .fulfilled(let result)  = createGroupResult, !result.isSuccess {
+                Log.e("群组创建失败………\(result)")
+                return
+            }
+            guard let conversation = imManager.getConversation(.GROUP, receiver: "ap_10086") else {
+                Log.e("会话对象获取失败")
+                return
+            }
+            let chatController = ChatViewController(conversation: conversation)
+            self?.navigationController?.pushViewController(chatController, animated: true)
+        }
+    }
+    
+    
+    // MARK: 创建进入群组
+    private func joinConversationFailed() {
+        let alertController = UIAlertController(title: nil, message: "群组进入失败", preferredStyle: .alert)
+        co_launch { [weak self] in
+            if let self = self {
+                let result = try! await(promise: alertController.cose_present(from: self, cancelTitle: "取消", confirmTitle: "再试一次"))
+                if case .fulfilled(let title) = result, title == "取消" {
+                    return
+                }
+                self.joinChatRoom()
+            }
+        }
     }
     
     

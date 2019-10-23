@@ -6,7 +6,7 @@
 //  Copyright © 2019 windbird. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 extension UIColor {
     

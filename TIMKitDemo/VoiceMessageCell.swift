@@ -9,10 +9,17 @@
 import Foundation
 import SnapKit
 
+@objc public protocol VoiceMessageCellDelegate {
+    @objc optional func didClickPlayButton(_ button: UIButton, of cell: VoiceMessageCell, with message: TIMMessage);
+}
+
+
 public class VoiceMessageCell: MessageCell {
     
-    private weak var playButton: UIButton!
+    private(set) public weak var playButton: UIButton!
     private var palyButtonWidth: SnapKit.Constraint!
+    public weak var delegate: VoiceMessageCellDelegate?
+    
     public override var message: TIMMessage! {
         didSet {
             super.message = message
@@ -45,6 +52,10 @@ public class VoiceMessageCell: MessageCell {
         setupSubviews()
     }
     
+    @objc private func didClickPlayButton(_ button: UIButton) {
+        delegate?.didClickPlayButton?(button, of: self, with: message)
+    }
+    
     private func setupSubviews() {
         let playButton = UIButton()
         playButton.contentHorizontalAlignment = .left
@@ -55,6 +66,7 @@ public class VoiceMessageCell: MessageCell {
         playButton.setTitle("100s", for: .normal)
         playButton.setTitleColor(.link, for: .normal)
         playButton.titleEdgeInsets = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 0)
+        playButton.addTarget(self, action: #selector(didClickPlayButton(_:)), for: .touchUpInside)
         self.playButton = playButton
         messageContentView.addSubview(playButton)
         playButton.makeCorner(radius: 8)

@@ -1,0 +1,6 @@
+module Pods_COSwiftExtension {
+  umbrella header "Pods-COSwiftExtension-umbrella.h"
+
+  export *
+  module * { export * }
+}

@@ -5,6 +5,7 @@ PODS:
     - cocore (~> 1.2.5)
   - IQKeyboardManagerSwift (6.5.1)
   - MJExtension (3.2.1)
+  - MJRefresh (3.2.0)
   - RxCocoa (5.0.0):
     - RxRelay (~> 5)
     - RxSwift (~> 5)
@@ -19,6 +20,7 @@ DEPENDENCIES:
   - coswift
   - IQKeyboardManagerSwift
   - MJExtension
+  - MJRefresh
   - RxCocoa (~> 5)
   - RxSwift (~> 5)
   - SnapKit
@@ -31,6 +33,7 @@ SPEC REPOS:
     - coswift
     - IQKeyboardManagerSwift
     - MJExtension
+    - MJRefresh
     - RxCocoa
     - RxRelay
     - RxSwift
@@ -43,12 +46,13 @@ SPEC CHECKSUMS:
   coswift: 1ab02b4ed647cce3e6315dc56ac9bbe9b0e634a2
   IQKeyboardManagerSwift: 9ac7524fad9f9fe9a3b98c927e7772471ca546d2
   MJExtension: 635f2c663dcb1bf76fa4b715b2570a5710aec545
+  MJRefresh: ed450d6eb9d3346a2cb033ab7eb6de090aeef437
   RxCocoa: fcf32050ac00d801f34a7f71d5e8e7f23026dcd8
   RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
   RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   TXIMSDK_iOS: add67201c64d0a8668e4bfab4d21f83e8075d00a
 
-PODFILE CHECKSUM: 98e27f784d4e91219a22af82f6633423f058fd50
+PODFILE CHECKSUM: 9ae8c288ef8c0e71aa600440d945adeb79841d18
 
 COCOAPODS: 1.8.3

@@ -10,7 +10,7 @@ import UIKit
 import SnapKit
 
 @objc public protocol MessageInputViewDelegate {
-    @objc optional func messageInputView(_ inutView: MessageInputView, didEndEditing text: String);
+    @objc optional func messageInputView(_ inputView: MessageInputView, didEndEditing text: String);
     @objc optional func messageInputView(_ inputView: MessageInputView, didHeightChanged height: CGFloat)
 }
 
@@ -58,6 +58,7 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
             })
         }
     }
+
     
     init() {
         super.init(frame: .zero)
@@ -133,6 +134,11 @@ public class MessageInputView: UIView, MessageInputBarDelegate {
         auditionView.snp.makeConstraints { make in
             make.edges.equalTo(audioInputView)
         }
+    }
+    
+    // MARK: 清空文本输入框内容
+    public func resetText(_ text: String?) {
+        inputBar.textField?.text = text
     }
     
     // MARK: 点击了语音按钮，打开、关闭语音输入视图

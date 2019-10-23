@@ -19,7 +19,7 @@ import SnapKit
 
 public class MessageInputBar: UIView, UITextViewDelegate {
 
-    private weak var textField: UITextView?
+    public weak var textField: UITextView?
     private weak var voiceBtn: UIButton?
     private weak var moreBtn: UIButton?
     private weak var textViewHeight: SnapKit.Constraint!

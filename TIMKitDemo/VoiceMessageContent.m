@@ -8,7 +8,6 @@
 
 #import "VoiceMessageContent.h"
 #import <MJExtension/MJExtension.h>
-#import "TIMKitDemo-Swift.h"
 
 @implementation VoiceMessageContent
 

@@ -11,9 +11,11 @@
 
 #import "MessageContent.h"
 #import "VoiceMessageContent.h"
+#import "TextMessageContent.h"
 #import "GenerateTestUserSig.h"
 #import "THelper.h"
 #import "MessageType.h"
 #import "TIMCustomElem+Parser.h"
+
 
 #endif /* TIMKitDemo_h */

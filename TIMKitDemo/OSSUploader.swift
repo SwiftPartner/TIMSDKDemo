@@ -8,6 +8,7 @@
 
 import Foundation
 import coswift
+import CommonTools
 
 public class OSSUploader: OSSLoader {
     

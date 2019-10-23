@@ -21,6 +21,12 @@ public class TextMessageCell: MessageCell {
         }
     }
     
+    public var content: String? {
+        didSet {
+            contentLabel.text = content
+        }
+    }
+    
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupSubviews()

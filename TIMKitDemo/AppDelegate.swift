@@ -10,6 +10,7 @@ import UIKit
 import RxSwift
 import coswift
 import IQKeyboardManagerSwift
+import CommonTools
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

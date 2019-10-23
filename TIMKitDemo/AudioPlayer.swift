@@ -8,9 +8,10 @@
 
 import Foundation
 import AVFoundation
+import CommonTools
 
-class AudioPlayer: NSObject, AVAudioPlayerDelegate {
-    
+public class AudioPlayer: NSObject, AVAudioPlayerDelegate {
+
     public var preparePlayer: ((AVAudioPlayer) -> Void)?
     public var onTimeChanged: ((Int, Int) -> Void)?
     private var audioURL: URL
@@ -20,18 +21,18 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
     private var currentTimeWhenInterrupted = 0.0
     private var isIntterupted = false
     public var delegate: AVAudioPlayerDelegate?
-    
-    init(audioURL: URL) {
+
+    public init(audioURL: URL) {
         self.audioURL = audioURL
         super.init()
         NotificationCenter.default.addObserver(self, selector: #selector(handleInterruption(notification:)), name: AVAudioSession.interruptionNotification, object: nil)
     }
-    
+
     // MARK: 处理音频播放中途被打断事件处理
     @objc private func handleInterruption(notification: NSNotification) {
         guard let userInfo = notification.userInfo,
             let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else  {
+            let type = AVAudioSession.InterruptionType(rawValue: typeValue) else {
                 Log.i("接收到打断事件")
                 return
         }
@@ -55,7 +56,7 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
             }
         }
     }
-    
+
     func play() throws {
         let player = try AVAudioPlayer(contentsOf: audioURL)
         player.delegate = self
@@ -70,7 +71,7 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
             throw PlayerError.failed
         }
     }
-    
+
     @objc private func tick() {
         if isIntterupted {
             Log.i("音频播放被打断……")
@@ -80,10 +81,10 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
             let currentTime = player.currentTime
             let time = ceil(currentTime - 0.1)
             let duration = ceil(player.duration - 0.1)
-            onTimeChanged?(Int(duration), Int(time))
+            onTimeChanged?(Int(time), Int(duration))
         }
     }
-    
+
     func stop() {
         timer?.invalidate()
         timer = nil
@@ -93,11 +94,13 @@ class AudioPlayer: NSObject, AVAudioPlayerDelegate {
         }
         isPlaying = false
     }
-    
-    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+
+    public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         timer?.invalidate()
         timer = nil
         isPlaying = false
+        let duration = Int(ceil(player.duration - 0.1))
+        onTimeChanged?(duration, duration)
         delegate?.audioPlayerDidFinishPlaying?(player, successfully: flag)
     }
     deinit {

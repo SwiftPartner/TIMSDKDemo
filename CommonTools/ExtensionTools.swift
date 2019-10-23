@@ -6,24 +6,24 @@
 //  Copyright © 2019 windbird. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
-extension Data {
+public extension Data {
     var isJSON: Bool {
         return JSONSerialization.isValidJSONObject(self)
     }
 }
 
-extension String {
+public extension String {
     
 }
 
-extension UIScreen {
+public extension UIScreen {
     var width: CGFloat { bounds.size.width }
     var height: CGFloat { bounds.size.height }
 }
 
-extension UIView {
+public extension UIView {
     var width: CGFloat { bounds.size.width }
     var height: CGFloat {bounds.size.height}
     var size: CGSize { bounds.size}

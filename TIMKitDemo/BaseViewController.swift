@@ -16,12 +16,15 @@ public class BaseViewController: UIViewController {
     public var showLoadingView = false {
         didSet {
             if showLoadingView {
-                let loadingView = LoadingView()
-                self.loadingView = loadingView
-                view.addSubview(loadingView)
-                loadingView.snp.makeConstraints { make in
-                    make.edges.equalTo(view)
+                if loadingView == nil {
+                    let loadingView = LoadingView()
+                    self.loadingView = loadingView
+                    view.addSubview(loadingView)
+                    loadingView.snp.makeConstraints { make in
+                        make.edges.equalTo(view)
+                    }
                 }
+                view.bringSubviewToFront(loadingView)
             } else {
                 loadingView.removeFromSuperview()
                 loadingView = nil

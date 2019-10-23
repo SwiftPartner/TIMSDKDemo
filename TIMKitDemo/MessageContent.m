@@ -8,6 +8,7 @@
 
 #import "MessageContent.h"
 #import "VoiceMessageContent.h"
+#import "TextMessageContent.h"
 #import <MJExtension/MJExtension.h>
 
 @implementation MessageContent
@@ -37,7 +38,8 @@
     switch (type) {
         case MessageTypeVoice:
             return [VoiceMessageContent mj_objectWithKeyValues:data];
-            break;
+        case MessageTypeText:
+            return [TextMessageContent mj_objectWithKeyValues:data];
         default:
             return  nil;
     }

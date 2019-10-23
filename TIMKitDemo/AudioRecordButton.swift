@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import CommonTools
 
 @objc public protocol AudioRecordButtonDelegate {
     @objc optional func onStartRecord(recordButton: AudioRecordButton);
