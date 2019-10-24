@@ -7,7 +7,7 @@
 //
 
 import Foundation
-public class MessageInputMenuView: UIView {
+public class InputMoreView: UIView {
 
     private static let menuCellId = "menu_cell_id"
     private weak var collectionView: UICollectionView?
@@ -35,7 +35,7 @@ public class MessageInputMenuView: UIView {
     }
 }
 
-extension MessageInputMenuView: UICollectionViewDataSource, UICollectionViewDelegate {
+extension InputMoreView: UICollectionViewDataSource, UICollectionViewDelegate {
 
    public func numberOfSections(in collectionView: UICollectionView) -> Int {
         return 1
@@ -46,7 +46,7 @@ extension MessageInputMenuView: UICollectionViewDataSource, UICollectionViewDele
     }
 
     public func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MessageInputMenuView.menuCellId, for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: InputMoreView.menuCellId, for: indexPath)
         cell.backgroundColor = .randomColor
         return cell
     }

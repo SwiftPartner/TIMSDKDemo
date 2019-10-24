@@ -25,7 +25,7 @@
 		946773B723540BB30037D2C8 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773B623540BB30037D2C8 /* ChatViewController.swift */; };
 		946773B923540BF20037D2C8 /* MessageInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773B823540BF20037D2C8 /* MessageInputView.swift */; };
 		946773BD23540D7B0037D2C8 /* MessageInputBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773BC23540D7B0037D2C8 /* MessageInputBar.swift */; };
-		946773BF235416000037D2C8 /* MessageInputMenuView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773BE235416000037D2C8 /* MessageInputMenuView.swift */; };
+		946773BF235416000037D2C8 /* InputMoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773BE235416000037D2C8 /* InputMoreView.swift */; };
 		946773C12354160D0037D2C8 /* MessageMenu.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773C02354160D0037D2C8 /* MessageMenu.swift */; };
 		946773C32354163F0037D2C8 /* AudioRecorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 946773C22354163F0037D2C8 /* AudioRecorder.swift */; };
 		946773F9235451B40037D2C8 /* VoiceConverter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 946773F2235451B40037D2C8 /* VoiceConverter.framework */; };
@@ -70,11 +70,11 @@
 		94AF300B2351DD3D00A776E0 /* TIMConnectstatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */; };
 		94AF300D2351ED7600A776E0 /* MessageTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300C2351ED7600A776E0 /* MessageTableView.swift */; };
 		94C2F9B423618DAC009F74A0 /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C2F9B323618DAC009F74A0 /* BaseNavigationController.swift */; };
+		94C2F9B72361C73E009F74A0 /* RecordAudioView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C2F9B62361C73E009F74A0 /* RecordAudioView.swift */; };
 		94C5396C2355592600D90C36 /* PlayerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C5396B2355592600D90C36 /* PlayerError.swift */; };
 		94C539712355AC8500D90C36 /* TICResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C539702355AC8500D90C36 /* TICResult.swift */; };
 		94C539742355BEB500D90C36 /* TextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C539732355BEB500D90C36 /* TextMessageCell.swift */; };
 		94C539762355E44A00D90C36 /* VoiceMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C539752355E44A00D90C36 /* VoiceMessageCell.swift */; };
-		94C539782355F56A00D90C36 /* AudioRecordView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C539772355F56A00D90C36 /* AudioRecordView.swift */; };
 		94CB51BB235EE172001F7CF3 /* MessageFileDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CB51BA235EE172001F7CF3 /* MessageFileDownloader.swift */; };
 		94CB51BD235EE28F001F7CF3 /* OSSDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CB51BC235EE28F001F7CF3 /* OSSDownloader.swift */; };
 		94CB51BF235EF342001F7CF3 /* VoiceMessagePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CB51BE235EF342001F7CF3 /* VoiceMessagePlayer.swift */; };
@@ -193,7 +193,7 @@
 		946773B623540BB30037D2C8 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		946773B823540BF20037D2C8 /* MessageInputView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputView.swift; sourceTree = "<group>"; };
 		946773BC23540D7B0037D2C8 /* MessageInputBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputBar.swift; sourceTree = "<group>"; };
-		946773BE235416000037D2C8 /* MessageInputMenuView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageInputMenuView.swift; sourceTree = "<group>"; };
+		946773BE235416000037D2C8 /* InputMoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InputMoreView.swift; sourceTree = "<group>"; };
 		946773C02354160D0037D2C8 /* MessageMenu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageMenu.swift; sourceTree = "<group>"; };
 		946773C22354163F0037D2C8 /* AudioRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecorder.swift; sourceTree = "<group>"; };
 		946773F2235451B40037D2C8 /* VoiceConverter.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = VoiceConverter.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -242,11 +242,11 @@
 		94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TIMConnectstatus.swift; sourceTree = "<group>"; };
 		94AF300C2351ED7600A776E0 /* MessageTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableView.swift; sourceTree = "<group>"; };
 		94C2F9B323618DAC009F74A0 /* BaseNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNavigationController.swift; sourceTree = "<group>"; };
+		94C2F9B62361C73E009F74A0 /* RecordAudioView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordAudioView.swift; sourceTree = "<group>"; };
 		94C5396B2355592600D90C36 /* PlayerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerError.swift; sourceTree = "<group>"; };
 		94C539702355AC8500D90C36 /* TICResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TICResult.swift; sourceTree = "<group>"; };
 		94C539732355BEB500D90C36 /* TextMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageCell.swift; sourceTree = "<group>"; };
 		94C539752355E44A00D90C36 /* VoiceMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceMessageCell.swift; sourceTree = "<group>"; };
-		94C539772355F56A00D90C36 /* AudioRecordView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioRecordView.swift; sourceTree = "<group>"; };
 		94CB51BA235EE172001F7CF3 /* MessageFileDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFileDownloader.swift; sourceTree = "<group>"; };
 		94CB51BC235EE28F001F7CF3 /* OSSDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSSDownloader.swift; sourceTree = "<group>"; };
 		94CB51BE235EF342001F7CF3 /* VoiceMessagePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceMessagePlayer.swift; sourceTree = "<group>"; };
@@ -412,10 +412,6 @@
 				946773B4235409E70037D2C8 /* LoadingView.swift */,
 				94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */,
 				94AF300C2351ED7600A776E0 /* MessageTableView.swift */,
-				946773BC23540D7B0037D2C8 /* MessageInputBar.swift */,
-				946773B823540BF20037D2C8 /* MessageInputView.swift */,
-				946773BE235416000037D2C8 /* MessageInputMenuView.swift */,
-				946773C02354160D0037D2C8 /* MessageMenu.swift */,
 				946773C22354163F0037D2C8 /* AudioRecorder.swift */,
 				9467741A235469C40037D2C8 /* RecorderError.swift */,
 				9471F00223548195004E595F /* AudioPlayer.swift */,
@@ -481,11 +477,8 @@
 		9471F00423548FBF004E595F /* view */ = {
 			isa = PBXGroup;
 			children = (
+				94C2F9B52361C6C8009F74A0 /* MessageInputView */,
 				94C539722355B50800D90C36 /* MessageCells */,
-				9471F00523548FD7004E595F /* AudioRecordButton.swift */,
-				94C539772355F56A00D90C36 /* AudioRecordView.swift */,
-				94F75E882356C92900D361DA /* AuditionView.swift */,
-				94F75E8A2356C94700D361DA /* AuditionView.xib */,
 				94A90408236032F1007E54D3 /* CoursewareView.swift */,
 				94A9040A23603505007E54D3 /* CoursewareCell.swift */,
 				94A9040C23604CD2007E54D3 /* ChatSettingsView.swift */,
@@ -517,6 +510,21 @@
 				94A90402236032AC007E54D3 /* ppt5.png */,
 			);
 			name = resources;
+			sourceTree = "<group>";
+		};
+		94C2F9B52361C6C8009F74A0 /* MessageInputView */ = {
+			isa = PBXGroup;
+			children = (
+				9471F00523548FD7004E595F /* AudioRecordButton.swift */,
+				946773BC23540D7B0037D2C8 /* MessageInputBar.swift */,
+				946773B823540BF20037D2C8 /* MessageInputView.swift */,
+				946773BE235416000037D2C8 /* InputMoreView.swift */,
+				946773C02354160D0037D2C8 /* MessageMenu.swift */,
+				94F75E882356C92900D361DA /* AuditionView.swift */,
+				94F75E8A2356C94700D361DA /* AuditionView.xib */,
+				94C2F9B62361C73E009F74A0 /* RecordAudioView.swift */,
+			);
+			name = MessageInputView;
 			sourceTree = "<group>";
 		};
 		94C5396D235571E100D90C36 /* messages */ = {
@@ -1056,6 +1064,7 @@
 				94C539762355E44A00D90C36 /* VoiceMessageCell.swift in Sources */,
 				94429D012351B8D900045E56 /* ViewController.swift in Sources */,
 				946773B923540BF20037D2C8 /* MessageInputView.swift in Sources */,
+				94C2F9B72361C73E009F74A0 /* RecordAudioView.swift in Sources */,
 				94AF300B2351DD3D00A776E0 /* TIMConnectstatus.swift in Sources */,
 				94A90409236032F1007E54D3 /* CoursewareView.swift in Sources */,
 				946773B3235408770037D2C8 /* BaseViewController.swift in Sources */,
@@ -1080,7 +1089,7 @@
 				946A969C235DD278000EEF95 /* MessageFileUploader.swift in Sources */,
 				94429CFD2351B8D900045E56 /* AppDelegate.swift in Sources */,
 				94C539742355BEB500D90C36 /* TextMessageCell.swift in Sources */,
-				946773BF235416000037D2C8 /* MessageInputMenuView.swift in Sources */,
+				946773BF235416000037D2C8 /* InputMoreView.swift in Sources */,
 				94F1E7DB23585890004E882E /* OSSLoaderDelegate.swift in Sources */,
 				946A969E235DD30A000EEF95 /* MessageFileLoaderDelegate.swift in Sources */,
 				9471F00323548195004E595F /* AudioPlayer.swift in Sources */,
@@ -1090,7 +1099,6 @@
 				94F1E7E423587995004E882E /* VoiceMessageContent.m in Sources */,
 				9467741B235469C40037D2C8 /* RecorderError.swift in Sources */,
 				94CB51BD235EE28F001F7CF3 /* OSSDownloader.swift in Sources */,
-				94C539782355F56A00D90C36 /* AudioRecordView.swift in Sources */,
 				94C539712355AC8500D90C36 /* TICResult.swift in Sources */,
 				9444E7542359697C0036E1D6 /* MessageContentParser.swift in Sources */,
 				94A903FA235FE700007E54D3 /* EXVoiceMessageContent.swift in Sources */,

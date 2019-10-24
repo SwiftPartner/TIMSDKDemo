@@ -11,15 +11,18 @@ import coswift
 import CommonTools
 
 class ViewController: BaseViewController, AudioRecordButtonDelegate {
-    
+
     private var recorder: AudioRecorder?
     private weak var recordBtn: UIButton?
     private var audioPlayer: AudioPlayer?
     private weak var playBtn: UIButton?
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         title = "登录/测试音频录制、播放"
+        navigationItem.rightBarButtonItem = UIBarButtonItem(
+            title: "聊天", style: .plain, target: self, action: #selector(joinChatRoom))
+
         let param = TIMLoginParam()
         let userId = "kakaxi"
         param.identifier = userId
@@ -29,13 +32,39 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
             self?.addRecordButton()
             self?.addPlaybackBtn()
             self?.changeRateBtn()
-            }, fail: { (code, msg) in
-                Log.e("登录失败……\(code) \(msg ?? "")")
+        }, fail: { (code, msg) in
+            Log.e("登录失败……\(code) \(msg ?? "")")
         })
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "聊天", style: .plain, target: self, action: #selector(joinChatRoom))
-        // Do any additional setup after loading the view.
+
+
+        let recordView = RecordAudioView()
+        recordView.backgroundColor = .yellow
+        view.addSubview(recordView)
+        recordView.snp.makeConstraints { make in
+            make.left.right.equalTo(self.view)
+            make.height.equalTo(140)
+            make.top.equalTo(self.view).offset(100)
+        }
+
+        let auditionView = AuditionView()
+        auditionView.backgroundColor = .red
+        view.addSubview(auditionView)
+        auditionView.snp.makeConstraints { make in
+            make.left.right.equalTo(self.view)
+            make.height.equalTo(140)
+            make.top.equalTo(recordView.snp.bottom)
+        }
+
+        let moreView = InputMoreView()
+        moreView.backgroundColor = .purple
+        view.addSubview(moreView)
+        moreView.snp.makeConstraints { make in
+            make.left.right.equalTo(self.view)
+            make.height.equalTo(140)
+            make.top.equalTo(auditionView.snp.bottom)
+        }
     }
-    
+
     @objc private func joinChatRoom() {
         showLoadingView = true
         let groupInfo = TIMCreateGroupInfo()
@@ -43,10 +72,10 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
         groupInfo.groupName = "10086"
         groupInfo.groupType = "Public"
         co_launch { [weak self] in
-            defer { self?.showLoadingView = false}
+            defer { self?.showLoadingView = false }
             guard let imManager = TIMManager.sharedInstance() else { return }
             let createGroupResult = try! await(promise: imManager.createAndJoinGroup(groupInfo))
-            if case .fulfilled(let result)  = createGroupResult, !result.isSuccess {
+            if case .fulfilled(let result) = createGroupResult, !result.isSuccess {
                 Log.e("群组创建失败………\(result)")
                 return
             }
@@ -58,8 +87,8 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
             self?.navigationController?.pushViewController(chatController, animated: true)
         }
     }
-    
-    
+
+
     // MARK: 创建进入群组
     private func joinConversationFailed() {
         let alertController = UIAlertController(title: nil, message: "群组进入失败", preferredStyle: .alert)
@@ -73,8 +102,8 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
             }
         }
     }
-    
-    
+
+
     func addRecordButton() {
         let recordButton = AudioRecordButton()
         recordBtn = recordButton
@@ -86,7 +115,7 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
         }
         recordButton.delegate = self
     }
-    
+
     func onStartRecord(recordButton: AudioRecordButton) {
         let paths = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)
         let voiceDir = paths[0].appendingPathComponent("com_xdpaction_actionpi").appendingPathComponent("voice")
@@ -94,18 +123,18 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
         do {
             try recorder.record()
             self.recorder = recorder
-        } catch(let error)  {
+        } catch(let error) {
             Log.e("因为录制失败\(error)")
         }
     }
-    
+
     func onStopRecord(recordButton: AudioRecordButton) {
         if let isRecording = recorder?.isRecording, isRecording {
             recorder?.stop()
             return
         }
     }
-    
+
     func addPlaybackBtn() {
         let playBtn = UIButton()
         self.playBtn = playBtn
@@ -120,7 +149,7 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
         }
         playBtn.addTarget(self, action: #selector(playAudio), for: .touchUpInside)
     }
-    
+
     func changeRateBtn() {
         let changeRateBtn = UIButton()
         changeRateBtn.setTitle("改变播放速率", for: .normal)
@@ -134,7 +163,7 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
         }
         changeRateBtn.addTarget(self, action: #selector(changeRate), for: .touchUpInside)
     }
-    
+
     @objc func changeRate() {
         var currentTime = 0.0
         if let audioPlayer = audioPlayer, audioPlayer.isPlaying {
@@ -143,12 +172,12 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
         }
         playAudioWithRate(Float.random(in: 0.1...2), currentTime: currentTime)
     }
-    
-    
+
+
     @objc func playAudio() {
         playAudioWithRate(1)
     }
-    
+
     @objc func playAudioWithRate(_ rate: Float, currentTime: TimeInterval = 0.0) {
         guard let audioURL = recorder?.voiceURL else {
             return
@@ -170,11 +199,11 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
             Log.i("音频播放失败\(error)")
         }
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
-    
+
     override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
         co_launch {
             let result = try await(promise: OSSManager.shared.fetchBucket(name: "windbird-voice"))
