@@ -8,11 +8,12 @@
 
 import UIKit
 import SnapKit
+import CommonTools
 
 public class BaseViewController: UIViewController {
-    
+
     private weak var loadingView: LoadingView!
-    
+
     public var showLoadingView = false {
         didSet {
             if showLoadingView {
@@ -31,11 +32,12 @@ public class BaseViewController: UIViewController {
             }
         }
     }
-    
+
     public override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.backBarButtonItem = UIBarButtonItem(title: "", style: .plain, target: nil, action: nil)
     }
-    
+
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         if showLoadingView, let loadingView = self.loadingView {

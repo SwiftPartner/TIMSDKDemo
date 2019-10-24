@@ -9,6 +9,7 @@
 import CommonTools
 import coswift
 import MJRefresh
+import RxSwift
 
 @objc public protocol MessageViewControllerDelegate {
     @objc optional func tableViewWillBeginDragging(_ tableView: UITableView)
@@ -30,7 +31,8 @@ public class MessageViewController: BaseViewController {
     private(set) public lazy var messages: Array<TIMMessage> = []
     public weak var delegate: MessageViewControllerDelegate?
     private var audioPlayer: AudioPlayer?
-    private var autoPlay: Bool = true
+    public var autoPlay: Bool = true
+    private lazy var disposeBag = DisposeBag()
 
     public init(conversation: TIMConversation) {
         self.conversation = conversation
@@ -45,14 +47,52 @@ public class MessageViewController: BaseViewController {
         super.viewDidLoad()
         setupTableView()
         loadMessages()
+        listenAudioPlayStatus()
     }
 
-    @objc private func onRefresh() {
-        Log.i("开始刷新了……")
-//        loadMessages(pulldown: true)
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 3, execute: {
-//            self.tableView.refreshControl?.endRefreshing()
-//        })
+    private func listenAudioPlayStatus() {
+        VoiceMessagePlayer.shared.playStatusObservable.subscribe(onNext: { [weak self] status in
+            guard let message = VoiceMessagePlayer.shared.message, let self = self else {
+                return
+            }
+            //            Log.i("音频播放状态变化了\(status) \(message.msgId()!)")
+            guard let index = self.messages.firstIndex(of: message) else {
+                return
+            }
+            guard let voiceCell = self.tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? VoiceMessageCell else {
+                return
+            }
+            Log.i("当前播放的音频是\(message.msgId()!)")
+            switch status {
+            case .startPlaying:
+                Log.i("开始播放")
+                self.delegate?.didSelectMessage?(message)
+                self.tableView.scrollToRow(at: IndexPath(row: index, section: 0), at: .top, animated: true)
+                voiceCell.playButton.isSelected = true
+                Log.i("更新第\(index)行的按钮状态")
+            case .downloading(let progress, let totalProgress):
+                Log.i("正在下载\(progress) \(totalProgress)")
+            case .stop(let manual):
+                voiceCell.playButton.isSelected = false
+                if self.autoPlay && !manual {
+                    Log.i("自动播放下一条语音")
+                    if let voiceMessage = self.viewModel.voiceMessage(in: self.messages, after: message) {
+                        let currentRow = self.messages.firstIndex(of: voiceMessage)!
+                        self.tableView.scrollToRow(at: IndexPath(row: currentRow, section: 0), at: .top, animated: true)
+                        VoiceMessagePlayer.shared.playVoiceMessage(voiceMessage)
+                    }
+                }
+                Log.i("停止播放")
+            case .error(let error):
+                voiceCell.playButton.isSelected = false
+                Log.i("播放失败\(error)")
+            case .playProgress(let current, let duration):
+                //                Log.i("播放进度\(current)  \(duration)")
+                break
+            case .prepare(let player):
+                break
+            }
+        }).disposed(by: disposeBag)
     }
 
     // MARK: 创建TableView
@@ -102,7 +142,8 @@ public class MessageViewController: BaseViewController {
             Log.i("消息拉取成功")
             self.appendMessages(newMessages)
             if let firstMsg = self.viewModel.messages.first {
-                self.autoPlayFromMessage(msg: firstMsg)
+                self.autoPlay = true
+                self.playFromMessage(msg: firstMsg)
             }
         }
     }
@@ -166,10 +207,6 @@ public class MessageViewController: BaseViewController {
         if scrollView == tableView {
             delegate?.tableViewWillBeginDragging?(tableView)
         }
-    }
-
-    deinit {
-        VoiceMessagePlayer.shared.removeListener(self)
     }
 }
 
@@ -244,9 +281,8 @@ extension MessageViewController: TIMMessageUpdateListener, TIMMessageRevokeListe
         Log.i("接收到了新消息\(msgs!)")
     }
 
-    public func autoPlayFromMessage(msg: TIMMessage) {
-        autoPlay = true
-        VoiceMessagePlayer.shared.addListener(self)
+    public func playFromMessage(msg: TIMMessage) {
+        Log.i("即将播放的音频是\(msg.msgId()!)")
         VoiceMessagePlayer.shared.playVoiceMessage(msg)
     }
 }
@@ -258,7 +294,7 @@ extension MessageViewController: MessageFileLoaderDelegate {
     }
 }
 
-extension MessageViewController: VoiceMessageCellDelegate, VoiceMessagePlayerListener {
+extension MessageViewController: VoiceMessageCellDelegate {
 
     public func didClickPlayButton(_ button: UIButton, of cell: VoiceMessageCell, with message: TIMMessage) {
         guard let voiceContent = message.content as? VoiceMessageContent else {
@@ -270,50 +306,16 @@ extension MessageViewController: VoiceMessageCellDelegate, VoiceMessagePlayerLis
         }
         delegate?.didSelectMessage?(message)
         let voicePlayer = VoiceMessagePlayer.shared
-        voicePlayer.addListener(self)
         if voicePlayer.isPlaying, voicePlayer.message?.msgId() == message.msgId() {
-            autoPlay = false
             voicePlayer.stopPlaying()
             return
         }
         if voicePlayer.isPlaying, voicePlayer.message?.msgId() != message.msgId() {
             autoPlay = true
             voicePlayer.stopPlaying()
-            voicePlayer.playVoiceMessage(message)
+            playFromMessage(msg: message)
             return
         }
-        voicePlayer.playVoiceMessage(message)
-    }
-
-    public func onPlayingVoiceMessageStatusChanged(_ status: VoiceMessagePlayStatus, message: TIMMessage) {
-        Log.i("音频播放状态变化了\(status) \(message.msgId()!)")
-        guard let index = self.messages.firstIndex(of: message) else {
-            return
-        }
-        guard let voiceCell = tableView.cellForRow(at: IndexPath(row: index, section: 0)) as? VoiceMessageCell else {
-            return
-        }
-        switch status {
-        case .startPlaying:
-            Log.i("开始播放")
-            delegate?.didSelectMessage?(message)
-            tableView.scrollToRow(at: IndexPath(row: index, section: 0), at: .bottom, animated: true)
-            voiceCell.playButton.isSelected = true
-        case .downloading(let progress, let totalProgress):
-            Log.i("正在下载\(progress) \(totalProgress)")
-        case .stop:
-            voiceCell.playButton.isSelected = false
-            if autoPlay {
-                if let voiceMessage = viewModel.voiceMessage(after: message) {
-                    VoiceMessagePlayer.shared.playVoiceMessage(voiceMessage)
-                }
-            }
-            Log.i("停止播放")
-        case .error(let error):
-            voiceCell.playButton.isSelected = false
-            Log.i("播放失败\(error)")
-        case .playProgress(let current, let duration):
-            Log.i("播放进度\(current)  \(duration)")
-        }
+        playFromMessage(msg: message)
     }
 }

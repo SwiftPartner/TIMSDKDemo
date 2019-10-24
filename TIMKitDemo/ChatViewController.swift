@@ -12,6 +12,7 @@ import coswift
 import AVFoundation
 import CommonTools
 import COSwiftExtension
+import RxSwift
 
 public class ChatViewController: BaseViewController {
 
@@ -23,6 +24,7 @@ public class ChatViewController: BaseViewController {
     private var audioPlayer: AudioPlayer?
     private var auditionVoiceUrl: URL?
     private var sendingMessage: TIMMessage?
+    private lazy var disposeBag = DisposeBag()
 
     public init(conversation: TIMConversation) {
         self.conversation = conversation
@@ -33,17 +35,27 @@ public class ChatViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
+    public override var prefersStatusBarHidden: Bool {
+        return navigationController?.isNavigationBarHidden == true
+    }
+    
+    public override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+        return .none
+    }
+    
     public override func viewDidLoad() {
         super.viewDidLoad()
+        navigationController?.hidesBarsOnSwipe = true
         view.backgroundColor = .groupColor
         addCoursewareView()
         addMessageInputView()
         addMessagesView()
         coursewareView.makeShadow()
         view.bringSubviewToFront(coursewareView)
-        
-        
-        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) { [weak self] in
+            self?.navigationController?.setNavigationBarHidden(true, animated: false)
+        }
+
         let audioRateView = AudioRateView()
         audioRateView.delegate = self
         audioRateView.backgroundColor = .white
@@ -52,8 +64,39 @@ public class ChatViewController: BaseViewController {
         audioRateView.snp.makeConstraints { make in
             make.right.centerY.equalTo(view)
         }
+        listenAudioPlayStatus()
     }
 
+    private func listenAudioPlayStatus() {
+        let voicePlayer = VoiceMessagePlayer.shared
+        voicePlayer.playStatusObservable.subscribe(onNext: { [weak self] status in
+            let message = voicePlayer.message
+            if message != self?.sendingMessage {
+                Log.i("不是试听音频事件，不处理")
+                return
+            }
+            switch status {
+            case .startPlaying:
+                self?.auditionVoiceUrl = self?.audioRecorder?.voiceURL
+                Log.i("开始播放试听音频")
+                self?.messageInputView.auditionView.isPlaying = true
+            case .downloading(let progress, let totalProgress):
+                Log.i("试听音频下载进度\(progress) \(totalProgress)")
+            case .stop:
+                Log.i("试听音频播放结束")
+                self?.messageInputView.auditionView.isPlaying = false
+            case .error(let error):
+                Log.e("试听音频播放失败\(error)")
+                self?.messageInputView.auditionView.playButton.isSelected = false
+            case .playProgress(let current, let duration):
+                //            Log.i("试听音频播放进度\(current)  \(duration)")
+                break
+            case .prepare(let player):
+                Log.i("...")
+            }
+        }).disposed(by: disposeBag)
+    }
+    
     public func sendMessage(msgContent: MessageContent) {
         msgContent.pptPage = NSNumber(value: coursewareView.currentPage)
         msgContent.pptTotalPage = NSNumber(value: coursewareView.totalPage)
@@ -104,7 +147,7 @@ public class ChatViewController: BaseViewController {
         view.addSubview(coursewareView)
         coursewareView.snp.makeConstraints { make in
             make.left.right.equalTo(view)
-            make.height.equalTo(coursewareView.snp.width).multipliedBy(0.75)
+            make.height.equalTo(coursewareView.snp.width).multipliedBy(9.0 / 16.0)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.top)
         }
     }
@@ -142,6 +185,7 @@ public class ChatViewController: BaseViewController {
 
     deinit {
         Log.w("页面关闭了……")
+        VoiceMessagePlayer.shared.stopPlaying()
     }
 }
 
@@ -160,14 +204,15 @@ extension ChatViewController: MessageViewControllerDelegate {
         Log.i("滚动到课件的第\(page)页")
         coursewareView.scrollTo(page: page)
     }
+
 }
 
 // MARK: 音频试听回调、录音按钮点击事件回调、音频播放回调
-extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, VoiceMessagePlayerListener {
+extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate {
 
     public func onStartRecord(recordButton: AudioRecordButton) {
         Log.i("开始录制音频……")
-        VoiceMessagePlayer.shared.stopPlaying()
+        stopPlayAudio()
         let audioRecorder = AudioRecorder(voiceDirectory: .voiceDirectory, maxDuration: 180)
         do {
             try audioRecorder.record()
@@ -178,7 +223,7 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, V
                 if current == max {
                     self?.messageInputView.timeLabel.isHidden = true
                     self?.messageInputView.recordButton.stopRecord()
-                    self?.messageInputView.showAuditionView = true
+                    self?.messageInputView.showAuditionView()
                     let duration = self?.audioRecorder?.duration ?? 0
                     self?.messageInputView.timeLabel.text = "\(duration)/\(max)s"
                 }
@@ -195,7 +240,7 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, V
             audioRecorder.stop()
             let duration = audioRecorder.duration ?? 0
             messageInputView.timeLabel.text = "\(duration)/\(180)s"
-            messageInputView.showAuditionView = true
+            messageInputView.showAuditionView()
         }
     }
     // MARK: 播放音频（试听）
@@ -205,9 +250,8 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, V
             return
         }
         let voicePlayer = VoiceMessagePlayer.shared
-        voicePlayer.addListener(self)
         if (auditionVoiceUrl != voiceUrl && voicePlayer.isPlaying) || voicePlayer.message != sendingMessage {
-            voicePlayer.stopPlaying()
+            stopPlayAudio()
         }
         if auditionVoiceUrl == nil || auditionVoiceUrl != voiceUrl {
             let message = TIMMessage.message(content: voiceContent)
@@ -215,10 +259,10 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, V
         }
         if voicePlayer.isPlaying {
             Log.i("停止播放试听音频……")
-            voicePlayer.stopPlaying()
+            stopPlayAudio()
         } else {
             Log.i("开始播放试听音频……")
-            voicePlayer.playVoiceMessage(sendingMessage!)
+            startPlayAudio(message: sendingMessage!)
         }
     }
     // MARK: 发送音频
@@ -226,7 +270,7 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, V
         stopPlayAudio()
         messageInputView.timeLabel.isHidden = true
         messageInputView.timeLabel.text = "0/180s"
-        messageInputView.showAuditionView = false
+        messageInputView.showAuditionView(false)
         if let voiceURL = audioRecorder?.voiceURL {
             DispatchQueue.main.async {
                 self.sendVoiceMessage(withFile: voiceURL)
@@ -237,7 +281,7 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, V
     // MARK: 删除音频
     public func onClickDeleteBtn(_ sender: UIButton, of auditionView: AuditionView) {
         stopPlayAudio()
-        messageInputView.showAuditionView = false
+        messageInputView.showAuditionView(false) 
         messageInputView.timeLabel.isHidden = true
         messageInputView.timeLabel.text = "0/\(180)s"
         if let voiceURL = audioRecorder?.voiceURL {
@@ -249,39 +293,14 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate, V
         }
     }
 
-    public func onPlayingVoiceMessageStatusChanged(_ status: VoiceMessagePlayStatus, message: TIMMessage) {
-        if message != self.sendingMessage {
-            Log.i("不是试听音频事件，不处理")
-            return
-        }
-        switch status {
-        case .startPlaying:
-            auditionVoiceUrl = audioRecorder?.voiceURL
-            Log.i("开始播放试听音频")
-            messageInputView.auditionView.isPlaying = true
-        case .downloading(let progress, let totalProgress):
-            Log.i("试听音频下载进度\(progress) \(totalProgress)")
-        case .stop:
-            Log.i("试听音频播放结束")
-            messageInputView.auditionView.isPlaying = false
-        case .error(let error):
-            Log.e("试听音频播放失败\(error)")
-            messageInputView.auditionView.playButton.isSelected = false
-        case .playProgress(let current, let duration):
-            break
-//            Log.i("试听音频播放进度\(current)  \(duration)")
-
-        }
-    }
-
-    public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
-        Log.i("音频试听自动播放完毕……")
-        messageInputView.auditionView.isPlaying = false
-        messageInputView.auditionView.playButton.isSelected = false
-    }
-
     private func stopPlayAudio() {
+        messageController.autoPlay = false
         VoiceMessagePlayer.shared.stopPlaying()
+    }
+
+    private func startPlayAudio(message: TIMMessage) {
+        VoiceMessagePlayer.shared.playVoiceMessage(message)
+        messageController.autoPlay = true
     }
 }
 
@@ -301,8 +320,12 @@ extension ChatViewController: MessageInputViewDelegate {
 }
 
 extension ChatViewController: AudioRateViewDelegate {
-    
-    public func audioRateView(_ rateView: AudioRateView, didSelectRate rate: Double) {
-        
+
+    public func audioRateView(_ rateView: AudioRateView, didSelectRate rate: Float) {
+        VoiceMessagePlayer.shared.rate = rate
+        if VoiceMessagePlayer.shared.isPlaying, let message = VoiceMessagePlayer.shared.message {
+            stopPlayAudio()
+            startPlayAudio(message: message)
+        }
     }
 }

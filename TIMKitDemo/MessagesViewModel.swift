@@ -33,13 +33,23 @@ public class MessagesViewModel {
         return TIMManager.sharedInstance()!.createAndJoinGroup(groupInfo)
     }
 
+    private func getMessage(_ count: Int32, last: TIMMessage?, succ: @escaping TIMGetMsgSucc, fail: @escaping TIMFail) {
+        let reachability = OSSReachability(hostName: "www.baidu.com")
+        let status = reachability?.currentReachabilityStatus()
+        if status?.rawValue == 0 {
+            conversation.getLocalMessage(count, last: last, succ: succ, fail: fail)
+        } else {
+            conversation.getMessage(count, last: last, succ: succ, fail: fail)
+        }
+    }
+
 
     /// 加载消息对话中的消息列表
     /// - Parameter refresh: 是否刷新消息 true 重新加载消息， false加载更多
     public func loadMessages() -> Promise<(TICResult)> {
         let lastMsg = messages.first ?? conversation.getLastMsg()
         let promise = Promise<TICResult>()
-        conversation.getMessage(20, last: lastMsg, succ: { [weak self] msgs in
+        getMessage(20, last: lastMsg, succ: { [weak self] msgs in
             if let self = self, let msgs = msgs as? [TIMMessage] {
                 self.hasMoreMessages = msgs.count >= 20
                 self.messages = msgs
@@ -84,17 +94,17 @@ public class MessagesViewModel {
         return uploader.upload()
     }
 
-    public func voiceMessage(after message: TIMMessage) -> TIMMessage? {
-        guard let index = messages.firstIndex(of: message) else {
+    public func voiceMessage(in messageList: [TIMMessage], after message: TIMMessage) -> TIMMessage? {
+        guard let index = messageList.firstIndex(of: message) else {
             return nil
         }
-        guard index + 1 < messages.count else {
+        guard index + 1 < messageList.count else {
             return nil
         }
-        let message = messages[index + 1]
+        let message = messageList[index + 1]
         if message.content?.type == MessageType.voice {
             return message
         }
-        return voiceMessage(after: message)
+        return voiceMessage(in: messageList, after: message)
     }
 }

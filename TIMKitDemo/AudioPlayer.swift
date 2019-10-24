@@ -10,17 +10,23 @@ import Foundation
 import AVFoundation
 import CommonTools
 
+public protocol AudioPlayerDelegate: NSObject {
+    func audioPlayer(_ audioPlayer: AudioPlayer, playStatus status: AudioPlayStatus)
+}
+
 public class AudioPlayer: NSObject, AVAudioPlayerDelegate {
 
     public var preparePlayer: ((AVAudioPlayer) -> Void)?
-    public var onTimeChanged: ((Int, Int) -> Void)?
-    private var audioURL: URL
+    private(set) public var audioURL: URL
     private(set) public var player: AVAudioPlayer?
     private var timer: Timer?
-    private(set) public var isPlaying = false
     private var currentTimeWhenInterrupted = 0.0
     private var isIntterupted = false
-    public var delegate: AVAudioPlayerDelegate?
+    public weak var delegate: AudioPlayerDelegate?
+    private(set) public var stopTime: TimeInterval?
+    public var isPlaying: Bool {
+        return player?.isPlaying ?? false
+    }
 
     public init(audioURL: URL) {
         self.audioURL = audioURL
@@ -57,14 +63,22 @@ public class AudioPlayer: NSObject, AVAudioPlayerDelegate {
         }
     }
 
-    func play() throws {
+
+    /// 从指定事件播放音频
+    /// - Parameter time: 播放开始时间点，如果为nil，默认从上次停止的时间点开始播放
+    func play(atTime time: TimeInterval? = nil) throws {
         let player = try AVAudioPlayer(contentsOf: audioURL)
+        if let time = time {
+            player.currentTime = time
+        } else {
+            player.currentTime = stopTime ?? 0
+        }
         player.delegate = self
         self.player = player
+        delegate?.audioPlayer(self, playStatus: .prepare(player: player))
         preparePlayer?(player)
         let prepared = player.prepareToPlay()
         let playing = player.play()
-        self.isPlaying = playing
         if prepared, playing {
             self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(tick), userInfo: nil, repeats: true)
         } else {
@@ -81,28 +95,31 @@ public class AudioPlayer: NSObject, AVAudioPlayerDelegate {
             let currentTime = player.currentTime
             let time = ceil(currentTime - 0.1)
             let duration = ceil(player.duration - 0.1)
-            onTimeChanged?(Int(time), Int(duration))
+            delegate?.audioPlayer(self, playStatus: .playProgress(current: Int(time), duration: Int(duration)))
         }
     }
 
-    func stop() {
+
+    /// 停止播放
+    public func stop() {
         timer?.invalidate()
         timer = nil
-        if let isPlaying = self.player?.isPlaying, isPlaying {
-            self.player?.stop()
-            delegate?.audioPlayerDidFinishPlaying?(player!, successfully: true)
+        if isPlaying {
+            stopTime = player?.currentTime
+            Log.i("上次停止时间\(stopTime)")
+            player?.stop()
+            delegate?.audioPlayer(self, playStatus: .stop(manual: true))
         }
-        isPlaying = false
     }
 
     public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
         timer?.invalidate()
         timer = nil
-        isPlaying = false
         let duration = Int(ceil(player.duration - 0.1))
-        onTimeChanged?(duration, duration)
-        delegate?.audioPlayerDidFinishPlaying?(player, successfully: flag)
+        delegate?.audioPlayer(self, playStatus: .playProgress(current: duration, duration: duration))
+        delegate?.audioPlayer(self, playStatus: .stop(manual: false))
     }
+
     deinit {
         NotificationCenter.default.removeObserver(self)
     }

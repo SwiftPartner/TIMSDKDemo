@@ -9,7 +9,7 @@
 import UIKit
 
 extension UIColor {
-    
+
     public static var groupColor: UIColor = {
         if #available(iOS 13.0, *) {
             return .systemGroupedBackground
@@ -17,5 +17,24 @@ extension UIColor {
             return .groupTableViewBackground
         }
     }()
-    
+
+    public static var randomColor: UIColor = UIColor(
+        red: CGFloat.random(in: 0.3...0.7),
+        green: CGFloat.random(in: 0.3...0.7),
+        blue: CGFloat.random(in: 0.3...1), alpha: 0.7
+    )
+
+    public static func hexColor(hex: Int, alpha: CGFloat = 1) -> UIColor {
+        let red = (hex >> 16) & 0xFF
+        let green = (hex >> 8) & 0xFF
+        let blue = hex & 0xFF
+        assert(red >= 0 && red <= 255, "Invalid red component")
+        assert(green >= 0 && green <= 255, "Invalid green component")
+        assert(blue >= 0 && blue <= 255, "Invalid blue component")
+        return UIColor(red: CGFloat(red) / 255,
+                       green: CGFloat(green) / 255,
+                       blue: CGFloat(blue) / 255,
+                       alpha: alpha)
+    }
+
 }

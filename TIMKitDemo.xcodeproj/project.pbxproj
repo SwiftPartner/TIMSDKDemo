@@ -69,6 +69,7 @@
 		94A9040F23605C70007E54D3 /* AudioRateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94A9040E23605C70007E54D3 /* AudioRateView.swift */; };
 		94AF300B2351DD3D00A776E0 /* TIMConnectstatus.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */; };
 		94AF300D2351ED7600A776E0 /* MessageTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94AF300C2351ED7600A776E0 /* MessageTableView.swift */; };
+		94C2F9B423618DAC009F74A0 /* BaseNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C2F9B323618DAC009F74A0 /* BaseNavigationController.swift */; };
 		94C5396C2355592600D90C36 /* PlayerError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C5396B2355592600D90C36 /* PlayerError.swift */; };
 		94C539712355AC8500D90C36 /* TICResult.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C539702355AC8500D90C36 /* TICResult.swift */; };
 		94C539742355BEB500D90C36 /* TextMessageCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94C539732355BEB500D90C36 /* TextMessageCell.swift */; };
@@ -77,7 +78,6 @@
 		94CB51BB235EE172001F7CF3 /* MessageFileDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CB51BA235EE172001F7CF3 /* MessageFileDownloader.swift */; };
 		94CB51BD235EE28F001F7CF3 /* OSSDownloader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CB51BC235EE28F001F7CF3 /* OSSDownloader.swift */; };
 		94CB51BF235EF342001F7CF3 /* VoiceMessagePlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CB51BE235EF342001F7CF3 /* VoiceMessagePlayer.swift */; };
-		94CB51C1235F01E2001F7CF3 /* VoiceMessageAudioPlayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94CB51C0235F01E2001F7CF3 /* VoiceMessageAudioPlayer.swift */; };
 		94CEE506235D98350040A4AC /* COSwiftExtension.h in Headers */ = {isa = PBXBuildFile; fileRef = 94CEE504235D98350040A4AC /* COSwiftExtension.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		94CEE509235D98350040A4AC /* COSwiftExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 94CEE502235D98350040A4AC /* COSwiftExtension.framework */; };
 		94CEE50A235D98350040A4AC /* COSwiftExtension.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 94CEE502235D98350040A4AC /* COSwiftExtension.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
@@ -241,6 +241,7 @@
 		94AF30082351CF8400A776E0 /* Environment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Environment.swift; sourceTree = "<group>"; };
 		94AF300A2351DD3D00A776E0 /* TIMConnectstatus.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TIMConnectstatus.swift; sourceTree = "<group>"; };
 		94AF300C2351ED7600A776E0 /* MessageTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageTableView.swift; sourceTree = "<group>"; };
+		94C2F9B323618DAC009F74A0 /* BaseNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseNavigationController.swift; sourceTree = "<group>"; };
 		94C5396B2355592600D90C36 /* PlayerError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlayerError.swift; sourceTree = "<group>"; };
 		94C539702355AC8500D90C36 /* TICResult.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TICResult.swift; sourceTree = "<group>"; };
 		94C539732355BEB500D90C36 /* TextMessageCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextMessageCell.swift; sourceTree = "<group>"; };
@@ -249,7 +250,6 @@
 		94CB51BA235EE172001F7CF3 /* MessageFileDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessageFileDownloader.swift; sourceTree = "<group>"; };
 		94CB51BC235EE28F001F7CF3 /* OSSDownloader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OSSDownloader.swift; sourceTree = "<group>"; };
 		94CB51BE235EF342001F7CF3 /* VoiceMessagePlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceMessagePlayer.swift; sourceTree = "<group>"; };
-		94CB51C0235F01E2001F7CF3 /* VoiceMessageAudioPlayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceMessageAudioPlayer.swift; sourceTree = "<group>"; };
 		94CEE502235D98350040A4AC /* COSwiftExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = COSwiftExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		94CEE504235D98350040A4AC /* COSwiftExtension.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = COSwiftExtension.h; sourceTree = "<group>"; };
 		94CEE505235D98350040A4AC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -421,6 +421,7 @@
 				9471F00223548195004E595F /* AudioPlayer.swift */,
 				94C5396B2355592600D90C36 /* PlayerError.swift */,
 				94C539702355AC8500D90C36 /* TICResult.swift */,
+				94C2F9B323618DAC009F74A0 /* BaseNavigationController.swift */,
 			);
 			name = TIMKitCustom;
 			sourceTree = "<group>";
@@ -444,7 +445,6 @@
 				94677414235454740037D2C8 /* THelper.m */,
 				94CEE533235DA0760040A4AC /* TIMExtension.swift */,
 				94CB51BE235EF342001F7CF3 /* VoiceMessagePlayer.swift */,
-				94CB51C0235F01E2001F7CF3 /* VoiceMessageAudioPlayer.swift */,
 			);
 			name = tools;
 			sourceTree = "<group>";
@@ -1074,7 +1074,6 @@
 				94C5396C2355592600D90C36 /* PlayerError.swift in Sources */,
 				94A9040B23603505007E54D3 /* CoursewareCell.swift in Sources */,
 				94A903FC235FEDEA007E54D3 /* EXMessage.swift in Sources */,
-				94CB51C1235F01E2001F7CF3 /* VoiceMessageAudioPlayer.swift in Sources */,
 				946773C32354163F0037D2C8 /* AudioRecorder.swift in Sources */,
 				94F1E7D523584AD3004E882E /* OSSManager.swift in Sources */,
 				94F1E7D323584354004E882E /* Secrets.swift in Sources */,
@@ -1104,6 +1103,7 @@
 				946773C12354160D0037D2C8 /* MessageMenu.swift in Sources */,
 				94A9040D23604CD2007E54D3 /* ChatSettingsView.swift in Sources */,
 				94F1E7D923585849004E882E /* OSSUploader.swift in Sources */,
+				94C2F9B423618DAC009F74A0 /* BaseNavigationController.swift in Sources */,
 				94429CFF2351B8D900045E56 /* SceneDelegate.swift in Sources */,
 				94F1E7D7235852C5004E882E /* OSSError.swift in Sources */,
 				94A9040F23605C70007E54D3 /* AudioRateView.swift in Sources */,

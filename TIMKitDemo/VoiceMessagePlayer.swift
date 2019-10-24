@@ -10,15 +10,14 @@ import Foundation
 import CommonTools
 import coswift
 import AVFoundation
+import RxSwift
 
-public protocol VoiceMessagePlayerListener: NSObject {
-    func onPlayingVoiceMessageStatusChanged(_ status: VoiceMessagePlayStatus, message: TIMMessage)
-}
+public enum AudioPlayStatus {
 
-public enum VoiceMessagePlayStatus {
+    case prepare(player: AVAudioPlayer)
     case startPlaying
     case downloading(progress: Int64, totalProgress: Int64)
-    case stop
+    case stop(manual: Bool)
     case error(error: Error)
     case playProgress(current: Int, duration: Int)
 }
@@ -26,52 +25,57 @@ public enum VoiceMessagePlayStatus {
 public class VoiceMessagePlayer: NSObject, MessageFileDownloaderDelegate {
     public static let shared = VoiceMessagePlayer()
     private var audioPlayer: AudioPlayer?
-    private lazy var listeners = Array<VoiceMessagePlayerListener>()
     private(set) public var message: TIMMessage?
     private var downloader: MessageFileDownloader?
-    public var isPlaying: Bool {
-        return audioPlayer?.isPlaying ?? false
-    }
+    public var rate: Float = 1
+    public var isPlaying: Bool { return audioPlayer?.isPlaying ?? false }
+
+    private lazy var playStatusObserver = ReplaySubject<AudioPlayStatus>.createUnbounded()
+    private(set) public lazy var playStatusObservable = playStatusObserver.share().observeOn(MainScheduler()).asObservable()
 
     private override init() { super.init() }
 
-    private func playAudio(_ url: URL, message: TIMMessage) {
+    private func playAudio(_ url: URL, message: TIMMessage, atTime time: TimeInterval? = nil) {
         audioPlayer?.delegate = nil
-        audioPlayer?.onTimeChanged = nil
-        let audioPlayer = VoiceMessageAudioPlayer(audioURL: url, message: message)
+        let isSameAudio = url.path == audioPlayer?.audioURL.path
+        var finalTime = isSameAudio ? (audioPlayer?.stopTime ?? 0) : 0
+        if let time = time {
+            finalTime = time
+        }
+        Log.i("从\(finalTime)开始播放")
+        let audioPlayer = AudioPlayer(audioURL: url)
+        audioPlayer.delegate = self
         do {
-            try audioPlayer.play()
+            try audioPlayer.play(atTime: finalTime)
             self.audioPlayer = audioPlayer
             self.message = message
-            notifyStaus(.startPlaying, message: message)
-            audioPlayer.messageAudioDelegate = self
-            audioPlayer.onTimeChanged = { [weak self] duration, now in
-                self?.notifyStaus(.playProgress(current: now, duration: duration), message: message)
-            }
+            playStatusObserver.onNext(.startPlaying)
         } catch (let error) {
             Log.e("音频播放出错了\(error)")
-            notifyStaus(.error(error: error), message: message)
+            playStatusObserver.onNext(.error(error: error))
         }
     }
 
-    public func playVoiceMessage(_ message: TIMMessage) {
-        if isPlaying, message.msgId() == self.message?.msgId() {
+    public func playVoiceMessage(_ message: TIMMessage, atTime time: TimeInterval? = nil) {
+        if isPlaying, message == self.message {
+            Log.i("正在播放当前音频……")
             return
         }
-        if isPlaying, message.msgId() != self.message?.msgId() {
+        if isPlaying, message != self.message {
+            Log.i("需要播放新音频，停止上一个正在播放的音频")
             stopPlaying()
         }
         guard let voiceContent = message.content as? VoiceMessageContent else {
-            notifyStaus(.error(error: OSSError.invalidateObjectKey), message: message)
+            playStatusObserver.onNext(.error(error: OSSError.invalidateObjectKey))
             return
         }
         guard let objectKey = voiceContent.objectKey else {
-            notifyStaus(.error(error: OSSError.invalidateObjectKey), message: message)
+            playStatusObserver.onNext(.error(error: OSSError.invalidateObjectKey))
             return
         }
         let voiceUrl = URL(fileURLWithPath: objectKey, relativeTo: URL.voiceDirectory)
         if FileManager.default.fileExists(atPath: voiceUrl.path) {
-            playAudio(voiceUrl, message: message)
+            playAudio(voiceUrl, message: message, atTime: time)
             return
         }
         co_launch { [weak self] in
@@ -85,16 +89,16 @@ public class VoiceMessagePlayer: NSObject, MessageFileDownloaderDelegate {
                 switch downloadResult {
                 case .fulfilled(let result):
                     Log.i("文件下载成功\(result)")
-                    self?.playAudio(voiceUrl, message: message)
+                    self?.playAudio(voiceUrl, message: message, atTime: time)
                     break
                 case .rejected(let error):
                     Log.e("文件下载失败\(error)")
-                    self?.notifyStaus(.error(error: error), message: message)
+                    self?.playStatusObserver.onNext(.error(error: error))
                     break
                 }
             } catch (let error) {
                 Log.e("音频文件下载失败\(error)")
-                self?.notifyStaus(.error(error: error), message: message)
+                self?.playStatusObserver.onNext(.error(error: error))
             }
         }
     }
@@ -103,57 +107,22 @@ public class VoiceMessagePlayer: NSObject, MessageFileDownloaderDelegate {
     /// 停止播放音频
     public func stopPlaying() {
         audioPlayer?.stop()
-        guard let message = message else {
-            return
-        }
-        notifyStaus(.stop, message: message)
-    }
-
-
-    // MARK: 广播音频状态
-    private func notifyStaus(_ status: VoiceMessagePlayStatus, message: TIMMessage) {
-        listeners.forEach { listener in
-            listener.onPlayingVoiceMessageStatusChanged(status, message: message)
-        }
     }
 
     public func fileDownloader(_ downloader: MessageFileDownloader, download message: TIMMessage, progress: Int64, totalProgress: Int64) {
-        notifyStaus(.downloading(progress: progress, totalProgress: totalProgress), message: message)
+        playStatusObserver.onNext(.downloading(progress: progress, totalProgress: totalProgress))
         Log.i("下载进度\(progress) \(totalProgress)")
-    }
-
-
-    /// 添加音频播放状态监听器
-    /// - Parameter listener: VoiceMessagePlayerListener
-    public func addListener(_ listener: VoiceMessagePlayerListener) {
-        let contains = listeners.contains(where: { temp -> Bool in
-            return temp == listener
-        })
-        if !contains {
-            listeners.append(listener)
-        }
-    }
-
-    //   MARK: 移除所有监听器
-    ///  移除音频播放状态监听器
-    public func removeListener(_ listener: VoiceMessagePlayerListener) {
-        let index = listeners.firstIndex { temp -> Bool in
-            temp == listener
-        }
-        if let index = index {
-            listeners.remove(at: index)
-        }
-    }
-
-    //   MARK: 移除所有监听器
-    ///  移除所有的
-    public func clearListeners() {
-        listeners.removeAll()
     }
 }
 
-extension VoiceMessagePlayer: VoiceMessageAudioPlayerDelegate {
-    public func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, message: TIMMessage, successfully flag: Bool) {
-        notifyStaus(.stop, message: message)
+extension VoiceMessagePlayer: AudioPlayerDelegate {
+    public func audioPlayer(_ audioPlayer: AudioPlayer, playStatus status: AudioPlayStatus) {
+        if case .prepare(let player) = status {
+            let audioSession = AVAudioSession.sharedInstance()
+            try? audioSession.setCategory(.playAndRecord, options: .defaultToSpeaker)
+            player.enableRate = true
+            player.rate = rate
+        }
+        playStatusObserver.onNext(status)
     }
 }
