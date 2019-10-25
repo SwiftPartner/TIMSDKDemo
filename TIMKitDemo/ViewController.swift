@@ -37,7 +37,7 @@ class ViewController: BaseViewController, AudioRecordButtonDelegate {
         })
 
 
-        let recordView = RecordAudioView()
+        let recordView = AudioRecordView()
         recordView.backgroundColor = .yellow
         view.addSubview(recordView)
         recordView.snp.makeConstraints { make in

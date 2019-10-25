@@ -13,6 +13,8 @@ import AVFoundation
 import CommonTools
 import COSwiftExtension
 import RxSwift
+import MobileCoreServices
+import Darwin
 
 public class ChatViewController: BaseViewController {
 
@@ -37,16 +39,17 @@ public class ChatViewController: BaseViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    public override var prefersStatusBarHidden: Bool {
-        return navigationController?.isNavigationBarHidden == true
-    }
-
-    public override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
-        return .none
-    }
+//    public override var prefersStatusBarHidden: Bool {
+//        return navigationController?.isNavigationBarHidden == true
+//    }
+//
+//    public override var preferredStatusBarUpdateAnimation: UIStatusBarAnimation {
+//        return .none
+//    }
 
     public override func viewDidLoad() {
         super.viewDidLoad()
+        title = "聊天室"
         navigationController?.hidesBarsOnSwipe = true
         view.backgroundColor = .groupColor
         addCoursewareView()
@@ -81,15 +84,15 @@ public class ChatViewController: BaseViewController {
             case .startPlaying:
                 self?.auditionVoiceUrl = self?.audioRecorder?.voiceURL
                 Log.i("开始播放试听音频")
-//                self?.messageInputView.auditionView.isPlaying = true
+                self?.messageInputView.isPlayingAudition = true
             case .downloading(let progress, let totalProgress):
                 Log.i("试听音频下载进度\(progress) \(totalProgress)")
             case .stop:
                 Log.i("试听音频播放结束")
-//                self?.messageInputView.auditionView.isPlaying = false
+                self?.messageInputView.isPlayingAudition = false
             case .error(let error):
                 Log.e("试听音频播放失败\(error)")
-//                self?.messageInputView.auditionView.playButton.isSelected = false
+                self?.messageInputView.isPlayingAudition = false
             case .playProgress(let current, let duration):
                 //            Log.i("试听音频播放进度\(current)  \(duration)")
                 break
@@ -128,7 +131,9 @@ public class ChatViewController: BaseViewController {
     }
 
     // MARK: 发送图片消息
-    private func sendImageMsg() {
+    private func sendImageMsg(image: UIImage) {
+        let imageName = THelper.genImageName(nil)
+        
         let imageElem = TIMImageElem()
         imageElem.path = ""
         let message = TIMMessage()
@@ -138,6 +143,11 @@ public class ChatViewController: BaseViewController {
         }) { (code, desc) in
             Log.i("图片消息发送失败\(code) \(desc ?? "")")
         }
+    }
+
+    // MARK: 发送音频消息
+    private func sendVideoMsg(url: URL) {
+
     }
 
     // MARK: UI搭建 - 课件视图
@@ -157,10 +167,9 @@ public class ChatViewController: BaseViewController {
     // MARK:  UI搭建 - 消息输入视图
     private func addMessageInputView() {
         let inputView = MessageInputView()
-        inputView.recordButtonDelegate = self
-        inputView.auditionViewDelegate = self
+        inputView.recordView.delegate = self
+        inputView.moreView.delegate = self
         self.messageInputView = inputView
-        //        inputView.backgroundColor = .groupColor
         inputView.delegate = self
         view.addSubview(inputView)
         let height = messageInputView.inputBarHeight
@@ -212,43 +221,41 @@ extension ChatViewController: MessageViewControllerDelegate {
 }
 
 // MARK: 音频试听回调、录音按钮点击事件回调、音频播放回调
-extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate {
-
-    public func onStartRecord(recordButton: AudioRecordButton) {
+extension ChatViewController: AudioRecordViewDelegate {
+    public func onStartRecord(from recordView: AudioRecordView) {
         Log.i("开始录制音频……")
-//        stopPlayAudio()
-//        let audioRecorder = AudioRecorder(voiceDirectory: .voiceDirectory, maxDuration: 180)
-//        do {
-//            try audioRecorder.record()
-//            audioRecorder.onRecordTimeChanged = { [weak self] max, current in
-//                Log.i("已经录制了\(current)秒，总共\(max)秒")
-//                self?.messageInputView.timeLabel.text = "\(current)/\(max)s"
-//                self?.messageInputView.timeLabel.isHidden = false
-//                if current == max {
-//                    self?.messageInputView.timeLabel.isHidden = true
-//                    self?.messageInputView.recordButton.stopRecord()
-//                    self?.messageInputView.showAuditionView()
-//                    let duration = self?.audioRecorder?.duration ?? 0
-//                    self?.messageInputView.timeLabel.text = "\(duration)/\(max)s"
-//                }
-//            }
-//            self.audioRecorder = audioRecorder
-//        } catch(let error) {
-//            Log.e("音频录制失败\(error)")
-//        }
+        stopPlayAudio()
+        let audioRecorder = AudioRecorder(voiceDirectory: .voiceDirectory, maxDuration: 180)
+        audioRecorder.onRecordTimeChanged = { [weak self] max, current in
+            Log.i("已经录制了\(current)秒，总共\(max)秒")
+            self?.messageInputView.updateTime("\(current)/\(max)s")
+            self?.messageInputView.hideTimeLabel(false)
+            if current == max {
+                self?.messageInputView.hideTimeLabel(true)
+                self?.messageInputView.stopRecord()
+                let duration = self?.audioRecorder?.duration ?? 0
+                self?.messageInputView.updateTime("\(duration)/\(max)s")
+            }
+        }
+        do {
+            try audioRecorder.record()
+            self.audioRecorder = audioRecorder
+        } catch(let error) {
+            Log.e("音频录制失败\(error)")
+        }
     }
-    // MARK: 停止播放音频
-    public func onStopRecord(recordButton: AudioRecordButton) {
-//        Log.i("停止录制音频……")
-//        if let audioRecorder = self.audioRecorder {
-//            audioRecorder.stop()
-//            let duration = audioRecorder.duration ?? 0
-//            messageInputView.timeLabel.text = "\(duration)/\(180)s"
-//            messageInputView.showAuditionView()
-//        }
+
+    // MARK: 停止录制音频
+    public func onStopRecord(from recordView: AudioRecordView) {
+        if let audioRecorder = self.audioRecorder {
+            Log.i("停止录制音频……")
+            audioRecorder.stop()
+            let duration = audioRecorder.duration ?? 0
+            messageInputView.updateTime("\(duration)/\(duration)s")
+        }
     }
-    // MARK: 播放音频（试听）
-    public func onClickPlayBtn(_ sender: UIButton, of auditionView: AuditionView) {
+
+    public func onPlayAudition(from recordView: AudioRecordView) {
         guard let voiceUrl = audioRecorder?.voiceURL, let voiceContent = VoiceMessageContent.messageContent(voiceLoalUrl: voiceUrl) else {
             Log.e("无效的音频文件")
             return
@@ -269,34 +276,33 @@ extension ChatViewController: AuditionViewDelegate, AudioRecordButtonDelegate {
             startPlayAudio(message: sendingMessage!)
         }
     }
+
+    public func onDelete(from recordView: AudioRecordView) {
+        stopPlayAudio()
+        messageInputView.hideTimeLabel(true)
+        messageInputView.updateTime("0/\(180)s")
+        if let voiceURL = audioRecorder?.voiceURL {
+            do {
+                try FileManager.default.removeItem(at: voiceURL)
+            } catch(let error) {
+                Log.e("音频删除失败\(error)")
+            }
+        }
+    }
+
     // MARK: 发送音频
-    public func onClickSendBtn(_ sender: UIButton, of auditionView: AuditionView) {
-//        stopPlayAudio()
-//        messageInputView.timeLabel.isHidden = true
-//        messageInputView.timeLabel.text = "0/180s"
-//        messageInputView.showAuditionView(false)
-//        if let voiceURL = audioRecorder?.voiceURL {
-//            DispatchQueue.main.async {
-//                self.sendVoiceMessage(withFile: voiceURL)
-//            }
-//        }
+    public func onSend(from recordView: AudioRecordView) {
+        stopPlayAudio()
+        messageInputView.hideTimeLabel(true)
+        messageInputView.updateTime("0/180s")
+        if let voiceURL = audioRecorder?.voiceURL {
+            DispatchQueue.main.async {
+                self.sendVoiceMessage(withFile: voiceURL)
+            }
+        }
     }
 
-    // MARK: 删除音频
-    public func onClickDeleteBtn(_ sender: UIButton, of auditionView: AuditionView) {
-//        stopPlayAudio()
-//        messageInputView.showAuditionView(false)
-//        messageInputView.timeLabel.isHidden = true
-//        messageInputView.timeLabel.text = "0/\(180)s"
-//        if let voiceURL = audioRecorder?.voiceURL {
-//            do {
-//                try FileManager.default.removeItem(at: voiceURL)
-//            } catch(let error) {
-//                Log.e("音频删除失败\(error)")
-//            }
-//        }
-    }
-
+    // MARK: 停止播放试听音频
     private func stopPlayAudio() {
         messageController.autoPlay = false
         VoiceMessagePlayer.shared.stopPlaying()
@@ -327,13 +333,70 @@ extension ChatViewController: MessageInputViewDelegate {
     }
 }
 
-extension ChatViewController: AudioRateViewDelegate {
+// MARK: 更多按钮点击回调
+extension ChatViewController: InputMoreViewDelegate {
+    public func moreView(_ moreView: InputMoreView, didSelectMenu menu: MoreMenu) {
+        switch menu.type {
+        case .image:
+            Log.i("准备发送图片消息")
+            pickMediaFromPicker(type: menu.type)
+        case .video:
+            Log.i("准备发送视频消息")
+            pickMediaFromPicker(type: menu.type)
+        case .courseware:
+            Log.i("准备发送课件")
+        }
+    }
 
+    private func pickMediaFromPicker(type: MoreMenuType) {
+        let sourceType = type == .image ? kUTTypeImage : kUTTypeMovie
+        let picker = UIImagePickerController()
+        picker.sourceType = .photoLibrary
+        picker.mediaTypes = [sourceType as String]
+        picker.delegate = self
+        picker.modalPresentationStyle = .fullScreen
+        present(picker, animated: true, completion: nil)
+    }
+}
+
+// MARK: 修改音频倍速回调
+extension ChatViewController: AudioRateViewDelegate {
     public func audioRateView(_ rateView: AudioRateView, didSelectRate rate: Float) {
         VoiceMessagePlayer.shared.rate = rate
         if VoiceMessagePlayer.shared.isPlaying, let message = VoiceMessagePlayer.shared.message {
             stopPlayAudio()
             startPlayAudio(message: message)
         }
+    }
+}
+
+extension ChatViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    public func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [
+        UIImagePickerController.InfoKey: Any]) {
+        picker.delegate = nil
+        picker.dismiss(animated: true) {
+            let mediaType = info[.mediaType] as! String
+            if mediaType == kUTTypeImage as String {
+                var image = info[.originalImage] as! UIImage
+                if image.imageOrientation != .up {
+                    let aspectRatio = min(1920 / image.width, 1920 / image.height)
+                    let aspectWidth = image.width * aspectRatio
+                    let aspectHeight = image.height * aspectRatio
+                    UIGraphicsBeginImageContext(CGSize(width: aspectWidth, height: aspectHeight))
+                    image.draw(in: CGRect(x: 0, y: 0, width: aspectWidth, height: aspectHeight))
+                    image = UIGraphicsGetImageFromCurrentImageContext()!
+                    UIGraphicsEndImageContext()
+                }
+                self.sendImageMsg(image: image)
+            } else {
+                let videoUrl = info[.mediaURL] as! URL
+                self.sendVideoMsg(url: videoUrl)
+            }
+        }
+    }
+
+    public func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        picker.dismiss(animated: true, completion: nil)
+        picker.delegate = nil
     }
 }

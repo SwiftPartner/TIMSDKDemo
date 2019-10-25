@@ -53,4 +53,9 @@
     return self.mj_JSONData;
 }
 
+
+- (NSArray *)mj_ignoredPropertyNames {
+    return @[@"path"];
+}
+
 @end

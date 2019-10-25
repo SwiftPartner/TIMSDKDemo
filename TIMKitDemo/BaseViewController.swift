@@ -27,7 +27,7 @@ public class BaseViewController: UIViewController {
                 }
                 view.bringSubviewToFront(loadingView)
             } else {
-                loadingView.removeFromSuperview()
+                loadingView?.removeFromSuperview()
                 loadingView = nil
             }
         }

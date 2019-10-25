@@ -14,9 +14,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property (assign) long dataSize;
 @property(nonatomic,assign) long second;
-@property(nonatomic, copy) NSString * _Nullable objectKey;
-@property(nonatomic, copy) NSString * _Nullable bucketName;
-@property(nonatomic, copy) NSString * _Nullable path;
 
 + (instancetype)contentWithDataSize:(long)dataSize second:(long)second;
 

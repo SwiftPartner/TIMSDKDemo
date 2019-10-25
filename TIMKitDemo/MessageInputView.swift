@@ -19,10 +19,15 @@ public class MessageInputView: UIView {
 
     public let inputBarHeight: CGFloat = 50
     private weak var inputBar: MessageInputBar!
-    private weak var recordView: RecordAudioView!
-//    public weak var auditionView: AuditionView!
+    private(set) public weak var recordView: AudioRecordView!
     public weak var moreView: InputMoreView!
     private var containerHeightConstraint: Constraint!
+    public weak var delegate: MessageInputViewDelegate?
+    public var isPlayingAudition: Bool = false {
+        didSet {
+            recordView?.isPlayingAudition = isPlayingAudition
+        }
+    }
     private var containerHeight: CGFloat = 0 {
         willSet {
             if newValue == containerHeight { return }
@@ -34,8 +39,6 @@ public class MessageInputView: UIView {
             }) { _ in self.isUserInteractionEnabled = true }
         }
     }
-
-    public weak var delegate: MessageInputViewDelegate?
 
     init() {
         super.init(frame: .zero)
@@ -66,8 +69,8 @@ public class MessageInputView: UIView {
             make.top.equalTo(inputBar.snp.bottom)
         }
 
-        let recordView = RecordAudioView()
-        recordView.backgroundColor = .yellow
+        let recordView = AudioRecordView()
+        recordView.backgroundColor = .clear
         recordView.isHidden = true
         self.recordView = recordView
         container.addSubview(recordView)
@@ -77,7 +80,7 @@ public class MessageInputView: UIView {
 
         let moreView = InputMoreView()
         moreView.isHidden = true
-        moreView.backgroundColor = .purple
+        moreView.backgroundColor = .clear
         self.moreView = moreView
         container.addSubview(moreView)
         moreView.snp.makeConstraints { make in
@@ -85,23 +88,33 @@ public class MessageInputView: UIView {
         }
     }
 
+    // MARK: 关闭语音输入视图 & 更多视图，只显示MessageInputBar
+    public func showInputBarOnly() {
+        recordView.isHidden = true
+        moreView.isHidden = true
+        containerHeight = 0
+    }
+
+}
+
+// MARK: 录音相关操作
+extension MessageInputView {
     // MARK: 清空文本输入框内容
     public func resetText(_ text: String?) {
         inputBar.textField?.text = text
     }
 
-    // MARK: 关闭语音输入视图 & 更多视图，只显示MessageInputBar
-    public func showInputBarOnly() {
-//        if !audioInputView.isHidden {
-//            showAudioInutView(false)
-//            return
-//        }
-//        if !inputMenuView.isHidden {
-//            showMenuView(false)
-//            return
-//        }
+    public func updateTime(_ time: String) {
+        recordView.timeLabel.text = time
     }
 
+    public func hideTimeLabel(_ hide: Bool) {
+        recordView.timeLabel.isHidden = hide
+    }
+
+    public func stopRecord() {
+        recordView.stopRecord()
+    }
 }
 
 extension MessageInputView: MessageInputBarDelegate {
@@ -120,12 +133,13 @@ extension MessageInputView: MessageInputBarDelegate {
 
     // MARK: 点击了更多按钮，打开、关闭更多视图
     public func didClickMoreButton() {
+        endEditing(true)
         moreView.isHidden = !moreView.isHidden
         if recordView.isHidden, moreView.isHidden {
             containerHeight = 0
         } else {
             recordView.isHidden = true
-            containerHeight = 140
+            containerHeight = 150
         }
     }
 

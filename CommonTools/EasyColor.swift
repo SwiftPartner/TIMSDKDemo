@@ -18,11 +18,14 @@ extension UIColor {
         }
     }()
 
-    public static var randomColor: UIColor = UIColor(
-        red: CGFloat.random(in: 0.3...0.7),
-        green: CGFloat.random(in: 0.3...0.7),
-        blue: CGFloat.random(in: 0.3...1), alpha: 0.7
-    )
+    public static func randomColor() -> UIColor {
+        return UIColor(
+            red: CGFloat.random(in: 0.2...0.8),
+            green: CGFloat.random(in: 0.2...0.8),
+            blue: CGFloat.random(in: 0.2...0.8),
+            alpha: 1
+        )
+    }
 
     public static func hexColor(hex: Int, alpha: CGFloat = 1) -> UIColor {
         let red = (hex >> 16) & 0xFF

@@ -51,18 +51,12 @@ public class MessageInputBar: UIView, UITextViewDelegate {
     
     
     private func setup() {
-        let dividerView = UIView()
-        dividerView.backgroundColor = #colorLiteral(red: 0.8, green: 0.8, blue: 0.8, alpha: 0.5401078345)
-        addSubview(dividerView)
-        dividerView.snp.makeConstraints { make in
-            make.left.right.top.equalTo(self)
-            make.height.equalTo(0.5)
-        }
+        makeCorner(radius: 0, borderColor: UIColor.hexColor(hex: 0xa9a9a9), borderWidth: 0.5)
         backgroundColor = .white
-        let voiceBtn = UIButton(type: .system)
+        let voiceBtn = UIButton()
         self.voiceBtn = voiceBtn
         voiceBtn.setContentHuggingPriority(.required, for: .horizontal)
-        voiceBtn.setTitle("语音", for: .normal)
+        voiceBtn.setImage(UIImage(named: "record"), for: .normal)
         addSubview(voiceBtn)
         voiceBtn.snp.makeConstraints { make in
             make.left.centerY.equalTo(self)
@@ -85,9 +79,9 @@ public class MessageInputBar: UIView, UITextViewDelegate {
             make.bottom.equalTo(self).offset(-8)
         }
         textField.sizeToFit()
-        let moreBtn = UIButton(type: .system)
+        let moreBtn = UIButton()
         self.moreBtn = moreBtn
-        moreBtn.setTitle("更多", for: .normal)
+        moreBtn.setImage(UIImage(named: "more"), for: .normal)
         moreBtn.setContentHuggingPriority(.required, for: .horizontal)
         addSubview(moreBtn)
         moreBtn.snp.makeConstraints { make in

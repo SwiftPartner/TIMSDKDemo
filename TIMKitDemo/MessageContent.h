@@ -16,6 +16,9 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, assign) MessageType type;
 @property(nonatomic, strong) NSNumber * _Nullable pptPage;
 @property(nonatomic, strong) NSNumber * _Nullable pptTotalPage;
+@property(nonatomic, copy) NSString * _Nullable objectKey;
+@property(nonatomic, copy) NSString * _Nullable bucketName;
+@property(nonatomic, copy) NSString * _Nullable path;
 
 - (nullable instancetype)initWithJson:(NSString *)json;
 - (nullable instancetype)initWithData:(NSData *)data;

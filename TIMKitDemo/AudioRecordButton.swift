@@ -23,7 +23,7 @@ public class AudioRecordButton: UIButton {
     public lazy var recordMode: RecordMode = .touchToRecord
     private var isRecording = false {
         didSet {
-            backgroundColor = isRecording ? .red : .green
+            backgroundColor = isRecording ? UIColor.hexColor(hex: 0xD92846) : UIColor.hexColor(hex: 0x1CB827)
         }
     }
     public weak var delegate: AudioRecordButtonDelegate?
@@ -37,7 +37,7 @@ public class AudioRecordButton: UIButton {
     }
 
     public func setup(recordMode: RecordMode) {
-        backgroundColor = .green
+        backgroundColor = UIColor.hexColor(hex: 0x1CB827)
         self.recordMode = recordMode
         addTarget(self, action: #selector(touchDown), for: .touchDown)
         addTarget(self, action: #selector(touchUpInside), for: .touchUpInside)
@@ -45,7 +45,7 @@ public class AudioRecordButton: UIButton {
     
     public override func layoutSubviews() {
         super.layoutSubviews()
-        makeCorner(radius: width / 2, borderColor: .yellow, borderWidth: 3)
+        makeCorner(radius: width / 2, borderColor: .white, borderWidth: 5)
     }
     
     @objc private func touchDown() {

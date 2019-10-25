@@ -16,6 +16,7 @@
 #import "THelper.h"
 #import "MessageType.h"
 #import "TIMCustomElem+Parser.h"
+#import "ImageMessageContent.h"
 
 
 #endif /* TIMKitDemo_h */
