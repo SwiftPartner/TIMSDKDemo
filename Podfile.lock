@@ -12,6 +12,9 @@ PODS:
   - RxRelay (5.0.0):
     - RxSwift (~> 5)
   - RxSwift (5.0.0)
+  - SDWebImage (5.2.3):
+    - SDWebImage/Core (= 5.2.3)
+  - SDWebImage/Core (5.2.3)
   - SnapKit (5.0.1)
   - TXIMSDK_iOS (4.5.55)
 
@@ -23,6 +26,7 @@ DEPENDENCIES:
   - MJRefresh
   - RxCocoa (~> 5)
   - RxSwift (~> 5)
+  - SDWebImage (~> 5.0)
   - SnapKit
   - TXIMSDK_iOS
 
@@ -37,6 +41,7 @@ SPEC REPOS:
     - RxCocoa
     - RxRelay
     - RxSwift
+    - SDWebImage
     - SnapKit
     - TXIMSDK_iOS
 
@@ -50,9 +55,10 @@ SPEC CHECKSUMS:
   RxCocoa: fcf32050ac00d801f34a7f71d5e8e7f23026dcd8
   RxRelay: 4f7409406a51a55cd88483f21ed898c234d60f18
   RxSwift: 8b0671caa829a763bbce7271095859121cbd895f
+  SDWebImage: 46a7f73228f84ce80990c786e4372cf4db5875ce
   SnapKit: 97b92857e3df3a0c71833cce143274bf6ef8e5eb
   TXIMSDK_iOS: add67201c64d0a8668e4bfab4d21f83e8075d00a
 
-PODFILE CHECKSUM: 9ae8c288ef8c0e71aa600440d945adeb79841d18
+PODFILE CHECKSUM: b82b72414732b9cf7ba47737d1bcf2efe12fbd71
 
 COCOAPODS: 1.8.3

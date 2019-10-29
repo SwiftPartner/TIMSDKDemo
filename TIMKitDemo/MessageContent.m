@@ -9,7 +9,9 @@
 #import "MessageContent.h"
 #import "VoiceMessageContent.h"
 #import "TextMessageContent.h"
+#import "ImageMessageContent.h"
 #import <MJExtension/MJExtension.h>
+#import "VideoMessageContent.h"
 
 @implementation MessageContent
 
@@ -40,6 +42,10 @@
             return [VoiceMessageContent mj_objectWithKeyValues:data];
         case MessageTypeText:
             return [TextMessageContent mj_objectWithKeyValues:data];
+        case MessageTypeImage:
+            return [ImageMessageContent mj_objectWithKeyValues:data];
+        case MessageTypeVideo:
+            return [VideoMessageContent mj_objectWithKeyValues:data];
         default:
             return  nil;
     }
@@ -58,4 +64,8 @@
     return @[@"path"];
 }
 
+- (id)valueForUndefinedKey:(NSString *)key {
+    NSLog(@"未定义%@", key);
+    return nil;
+}
 @end

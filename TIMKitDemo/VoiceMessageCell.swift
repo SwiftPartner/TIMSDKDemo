@@ -8,6 +8,7 @@
 
 import Foundation
 import SnapKit
+import CommonTools
 
 @objc public protocol VoiceMessageCellDelegate {
     @objc optional func didClickPlayButton(_ button: UIButton, of cell: VoiceMessageCell, with message: TIMMessage);
@@ -15,25 +16,25 @@ import SnapKit
 
 
 public class VoiceMessageCell: MessageCell {
-    
+
     private(set) public weak var playButton: UIButton!
     private var palyButtonWidth: SnapKit.Constraint!
     public weak var delegate: VoiceMessageCellDelegate?
-    
+
     public override var message: TIMMessage! {
         didSet {
             super.message = message
         }
     }
-    
+
     public var voiceContent: VoiceMessageContent! {
         didSet {
             playButton.setTitle("\(voiceContent.second)秒", for: .normal)
         }
     }
-    
+
     public var voiceWidth: CGFloat = 100 {
-        didSet{
+        didSet {
             if let palyButtonWidth = palyButtonWidth {
                 let voiceWidth = self.voiceWidth
                 palyButtonWidth.update(offset: voiceWidth)
@@ -41,21 +42,21 @@ public class VoiceMessageCell: MessageCell {
             }
         }
     }
-    
+
     public override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupSubviews()
     }
-    
+
     public required init?(coder: NSCoder) {
         super.init(coder: coder)
         setupSubviews()
     }
-    
+
     @objc private func didClickPlayButton(_ button: UIButton) {
         delegate?.didClickPlayButton?(button, of: self, with: message)
     }
-    
+
     private func setupSubviews() {
         let playButton = UIButton()
         playButton.contentHorizontalAlignment = .left
@@ -79,5 +80,9 @@ public class VoiceMessageCell: MessageCell {
             make.right.equalTo(playButton)
         }
     }
-    
+
+    public override func updateConstraints() {
+        super.updateConstraints()
+        Log.i("更新约束")
+    }
 }

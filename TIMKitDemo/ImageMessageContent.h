@@ -15,7 +15,6 @@ NS_ASSUME_NONNULL_BEGIN
 
 @property(assign, nonatomic) NSInteger width;
 @property(assign, nonatomic) NSInteger height;
-@property(assign, nonatomic) UIImage * _Nullable image;
 
 + (instancetype)contentWithImage:(UIImage *) image;
 

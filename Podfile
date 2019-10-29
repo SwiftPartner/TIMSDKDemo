@@ -15,6 +15,10 @@ target 'TIMKitDemo' do
    pod 'AliyunOSSiOS'
    pod 'MJExtension'
    pod 'MJRefresh'
+   pod 'SDWebImage', '~> 5.0'
+   pod 'ZFPlayer', '~> 3.0'
+   pod 'ZFPlayer/AVPlayer', '~> 3.0'
+   pod 'KTVHTTPCache', '~> 2.0.0'
 
   target 'TIMKitDemoTests' do
     inherit! :search_paths

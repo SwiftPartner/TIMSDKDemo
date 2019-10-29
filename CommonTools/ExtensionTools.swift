@@ -12,6 +12,10 @@ public extension Data {
     var isJSON: Bool {
         return JSONSerialization.isValidJSONObject(self)
     }
+    // Data以MB为单位计算大小
+    var countInMB: Double {
+        return Double(count) / 1024.0 / 1024.0
+    }
 }
 
 public extension String {
@@ -49,28 +53,6 @@ public extension UIView {
 public extension UIImage {
     var width: CGFloat { size.width }
     var height: CGFloat { size.height }
-
-    var imageSizeInMB: Double {
-        guard let count = pngData()?.count else {
-            return 0
-        }
-        return Double(count) / 1024.0 / 1024.0
-    }
-
-    /// 测量图片存储为文件后的大小
-    func measureRealSize() -> CGFloat {
-        var tempURL = FileManager.default.temporaryDirectory
-        let tempFilePath = tempURL.appendingPathComponent("hhh").path
-        let success = FileManager.default.createFile(atPath: tempFilePath, contents: pngData(), attributes: nil)
-        if success {
-            let url = URL(fileURLWithPath: tempFilePath)
-            let data = try! Data(contentsOf: url)
-            let byteCount = data.count
-            let displaySize = ByteCountFormatter.string(fromByteCount: Int64(byteCount), countStyle: .file)
-            return CGFloat(Float(displaySize)!)
-        }
-        return 0
-    }
 
     func fixedOrientation() -> UIImage? {
 
@@ -131,9 +113,7 @@ public extension UIImage {
     /// - Parameter maxWidth: 输出的图片的最大宽度，默认不限制
     /// - Parameter maxHeight: 输出图片的最大高度，默认不限制
     func limitImageSize(inWidth maxWidth: CGFloat = CGFloat.greatestFiniteMagnitude, maxHeight: CGFloat = CGFloat.greatestFiniteMagnitude) -> UIImage? {
-        guard let image = fixedOrientation() else {
-            return nil
-        }
+        guard let image = fixedOrientation() else { return nil }
         if image.width < maxWidth, image.height < maxHeight { return self }
         var aspectScale: CGFloat = 0
         if image.width > maxWidth {
@@ -151,4 +131,97 @@ public extension UIImage {
         UIGraphicsEndImageContext()
         return finalImage
     }
+
+    /// 限制图片的宽高和大小
+    /// - Parameter maxWidth: 最大宽度（默认不限制）
+    /// - Parameter maxHeight: 最大高度（默认不限制）
+    /// - Parameter dataCount: 图片占用最大空间
+    func limitImageSize(inWidth maxWidth: CGFloat = CGFloat.greatestFiniteMagnitude, maxHeight: CGFloat = CGFloat.greatestFiniteMagnitude, dataCount: Int) -> Data? {
+        let image = limitImageSize(inWidth: maxWidth, maxHeight: maxHeight)
+        func scalleImage(compressionQuality: CGFloat) -> Data? {
+            print("新的压缩比\(compressionQuality)")
+            guard let imageData = image?.jpegData(compressionQuality: compressionQuality) else { return nil }
+            print("压缩后的图片大小\(imageData.count)")
+            if imageData.count < dataCount || compressionQuality <= 0 {
+                return imageData
+            }
+            return scalleImage(compressionQuality: compressionQuality - 0.1)
+        }
+        return scalleImage(compressionQuality: 1)
+    }
+
+    /// 异步压缩图片
+    /// - Parameter maxWidth: 最大宽度（默认不限制）
+    /// - Parameter maxHeight: 最大高度（默认不限制）
+    /// - Parameter dataCount: 图片占用最大空间
+    /// - Parameter completion: 回调
+    func limitImageSizeAsync(inWidth maxWidth: CGFloat = CGFloat.greatestFiniteMagnitude, maxHeight: CGFloat = CGFloat.greatestFiniteMagnitude, dataCount: Int, completion: ((Data?) -> Void)?) {
+        DispatchQueue.global().async {
+            let data = self.limitImageSize(inWidth: maxWidth, maxHeight: maxHeight, dataCount: dataCount)
+            completion?(data)
+        }
+    }
+
+    /// 限制图片的大小
+    /// - Parameter dataSize: 限制大小
+    /// - Parameter file: 文件路径
+    class func limitImageDataSize(_ dataSize: Int, from file: URL) -> UIImage? {
+        guard let image = UIImage(contentsOfFile: file.path), let dataCount = image.pngData()?.count else { return nil }
+        if dataCount <= dataSize { return image }
+        let scale = CGFloat(dataSize) / CGFloat(dataCount)
+        return image.scaleImage(scale: scale)
+    }
+
+    /// 按照比例缩放图片的宽高
+    /// - Parameter scale: 缩放比
+    func scaleImage(scale: CGFloat) -> UIImage? {
+        let aspectWidth = width * scale
+        let aspectHeight = height * scale
+        UIGraphicsBeginImageContext(CGSize(width: aspectWidth, height: aspectHeight))
+        draw(in: CGRect(x: 0, y: 0, width: aspectWidth, height: aspectHeight))
+        let finalImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return finalImage
+    }
+}
+
+public extension FileManager {
+    /// 获取文件大小，以byte为单位；
+    /// - Parameter fileUrl: 文件路径
+    class func fileSizeInBytes(fileUrl: URL?) -> Int? {
+        guard let fileUrl = fileUrl else {
+            return nil
+        }
+        do {
+            let atts = try FileManager.default.attributesOfItem(atPath: fileUrl.path)
+            if let fileSize = atts[.size] as? Int {
+                return fileSize
+            }
+        } catch (let error) {
+            Log.i("文件属性获取失败\(error)")
+        }
+        return nil
+    }
+
+
+    /// 获取文件大小，以MB为单位；
+    /// - Parameter fileUrl: 文件路径
+    class func fileSizeInMB(fileUrl: URL?) -> Double? {
+        guard let bytes = fileSizeInBytes(fileUrl: fileUrl) else {
+            return nil
+        }
+        return Double(bytes) / 1024.0 / 1024.0
+    }
+
+    class func createFileAsync(atPath path: String, contents: Data?, attributes: [FileAttributeKey: Any]?, completion: @escaping (Bool) -> Void) {
+        DispatchQueue.global().async {
+            let result = FileManager.default.createFile(atPath: path, contents: contents, attributes: attributes)
+            completion(result)
+        }
+    }
+}
+
+
+public extension URL {
+    
 }

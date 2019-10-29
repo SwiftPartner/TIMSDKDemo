@@ -44,4 +44,8 @@ public class BaseViewController: UIViewController {
             view.bringSubviewToFront(loadingView)
         }
     }
+
+    deinit {
+        Log.w("\(self)销毁了")
+    }
 }

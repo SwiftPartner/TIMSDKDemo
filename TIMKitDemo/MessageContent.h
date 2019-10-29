@@ -19,6 +19,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property(nonatomic, copy) NSString * _Nullable objectKey;
 @property(nonatomic, copy) NSString * _Nullable bucketName;
 @property(nonatomic, copy) NSString * _Nullable path;
+@property(nonatomic, copy) void(^hh)(NSString *test);
 
 - (nullable instancetype)initWithJson:(NSString *)json;
 - (nullable instancetype)initWithData:(NSData *)data;

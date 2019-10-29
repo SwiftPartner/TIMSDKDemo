@@ -17,6 +17,7 @@
 #import "MessageType.h"
 #import "TIMCustomElem+Parser.h"
 #import "ImageMessageContent.h"
+#import "VideoMessageContent.h"
 
 
 #endif /* TIMKitDemo_h */

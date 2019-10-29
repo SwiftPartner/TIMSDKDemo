@@ -28,6 +28,7 @@ public class ChatViewController: BaseViewController {
     private var auditionVoiceUrl: URL?
     private var sendingMessage: TIMMessage!
     private lazy var disposeBag = DisposeBag()
+    private lazy var viewModel = ChatViewModel()
 
 
     public init(conversation: TIMConversation) {
@@ -69,7 +70,7 @@ public class ChatViewController: BaseViewController {
         audioRateView.snp.makeConstraints { make in
             make.right.centerY.equalTo(view)
         }
-        listenAudioPlayStatus()
+//        listenAudioPlayStatus()
     }
 
     private func listenAudioPlayStatus() {
@@ -131,23 +132,42 @@ public class ChatViewController: BaseViewController {
     }
 
     // MARK: 发送图片消息
-    private func sendImageMsg(image: UIImage) {
-        let imageName = THelper.genImageName(nil)
-        
-        let imageElem = TIMImageElem()
-        imageElem.path = ""
-        let message = TIMMessage()
-        message.add(imageElem)
-        conversation.send(message, succ: {
-            Log.i("图片消息发送成功……")
-        }) { (code, desc) in
-            Log.i("图片消息发送失败\(code) \(desc ?? "")")
+    private func sendImageMsg(image: UIImage?) {
+        showLoadingView = true
+        co_launch { [weak self] in
+            defer { self?.showLoadingView = false }
+            do {
+                let result = try await(promise: ImageMessageContent.generateImageMessage(image: image))
+                switch result {
+                case .fulfilled(let message):
+                    self?.messageController.didSendMessage(message)
+                    Log.i("创建了图片消息\(message)")
+                case .rejected(let error):
+                    Log.e("图像选取失败……\(error)")
+                }
+            } catch(let error) {
+                Log.e("图像选取失败……\(error)")
+            }
         }
     }
 
     // MARK: 发送音频消息
     private func sendVideoMsg(url: URL) {
-
+        showLoadingView = true
+        co_launch { [weak self] in
+            defer { self?.showLoadingView = false }
+            do {
+                let result = try await(promise: VideoMessageContent.generateVideoMessage(withVideoUrl: url))
+                switch result {
+                case .fulfilled(let message):
+                    self?.messageController.didSendMessage(message)
+                case .rejected(let error):
+                    Log.e("视频消息对象创建失败\(error)")
+                }
+            } catch (let error) {
+                Log.e("视频消息对象创建失败\(error)")
+            }
+        }
     }
 
     // MARK: UI搭建 - 课件视图
@@ -376,18 +396,9 @@ extension ChatViewController: UIImagePickerControllerDelegate & UINavigationCont
         picker.delegate = nil
         picker.dismiss(animated: true) {
             let mediaType = info[.mediaType] as! String
+            let orginalImage = info[.originalImage] as? UIImage
             if mediaType == kUTTypeImage as String {
-                var image = info[.originalImage] as! UIImage
-                if image.imageOrientation != .up {
-                    let aspectRatio = min(1920 / image.width, 1920 / image.height)
-                    let aspectWidth = image.width * aspectRatio
-                    let aspectHeight = image.height * aspectRatio
-                    UIGraphicsBeginImageContext(CGSize(width: aspectWidth, height: aspectHeight))
-                    image.draw(in: CGRect(x: 0, y: 0, width: aspectWidth, height: aspectHeight))
-                    image = UIGraphicsGetImageFromCurrentImageContext()!
-                    UIGraphicsEndImageContext()
-                }
-                self.sendImageMsg(image: image)
+                self.sendImageMsg(image: orginalImage)
             } else {
                 let videoUrl = info[.mediaURL] as! URL
                 self.sendVideoMsg(url: videoUrl)

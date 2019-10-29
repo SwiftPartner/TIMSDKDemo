@@ -9,6 +9,6 @@
 import Foundation
 public enum BucketName: String {
     case voice = "windbird-voice"
-    case image = "image"
-    case video = "video"
+    case image = "windbird-image"
+    case video = "windbird-video"
 }

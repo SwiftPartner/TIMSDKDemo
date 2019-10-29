@@ -73,7 +73,7 @@ public class VoiceMessagePlayer: NSObject, MessageFileDownloaderDelegate {
             playStatusObserver.onNext(.error(error: OSSError.invalidateObjectKey))
             return
         }
-        let voiceUrl = URL(fileURLWithPath: objectKey, relativeTo: URL.voiceDirectory)
+        let voiceUrl = URL.voiceURL(withName: objectKey)
         if FileManager.default.fileExists(atPath: voiceUrl.path) {
             playAudio(voiceUrl, message: message, atTime: time)
             return

@@ -9,6 +9,7 @@
 import Foundation
 import coswift
 import CommonTools
+import AVFoundation
 
 public class MessagesViewModel {
     private(set) public var conversation: TIMConversation
@@ -80,6 +81,31 @@ public class MessagesViewModel {
             }
             return promise
         }
+        if let imageContent = msg.content as? ImageMessageContent {
+            let voiceUrl = URL(fileURLWithPath: imageContent.path!)
+            let promise = self.uploadFile(voiceUrl, of: msg, to: .image, uploadDelegate: uploadDelegate).then { [weak self] putResult -> Promise<TICResult> in
+                guard let self = self else { return Promise<TICResult>() }
+                return self.conversation.sendMessage(msg)
+            }
+            return promise
+        }
+        if let videoContent = msg.content as? VideoMessageContent {
+            let objectKey = videoContent.objectKey!
+            let videoUrl = URL.videoURL(withName: objectKey)
+            let thumbnailUrl = URL.imageURL(withName: objectKey)
+            let promise = self.uploadFile(videoUrl, of: msg, to: .video, uploadDelegate: uploadDelegate).then { [weak self] putResult -> Promise<OSSPutObjectResult> in
+                guard let self = self else {
+                    return Promise<OSSPutObjectResult>()
+                }
+                return self.uploadFile(thumbnailUrl, of: msg, to: .image, uploadDelegate: uploadDelegate)
+            }.then { [weak self] putResult -> Promise<TICResult> in
+                guard let self = self else {
+                    return Promise<TICResult>()
+                }
+                return self.conversation.sendMessage(msg)
+            }
+            return promise
+        }
         return conversation.sendMessage(msg)
     }
 
@@ -94,6 +120,7 @@ public class MessagesViewModel {
         return uploader.upload()
     }
 
+
     public func voiceMessage(in messageList: [TIMMessage], after message: TIMMessage) -> TIMMessage? {
         guard let index = messageList.firstIndex(of: message) else {
             return nil
@@ -107,4 +134,11 @@ public class MessagesViewModel {
         }
         return voiceMessage(in: messageList, after: message)
     }
+
+    public func downloadFiles(from message: TIMMessage, downloadDelegate: MessageFileDownloaderDelegate) {
+
+    }
+
+
+
 }

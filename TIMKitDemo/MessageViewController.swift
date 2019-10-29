@@ -113,6 +113,8 @@ public class MessageViewController: BaseViewController {
         tableView.register(TextMessageCell.self, forCellReuseIdentifier: textCellID)
         tableView.register(MessageCell.self, forCellReuseIdentifier: cellID)
         tableView.register(VoiceMessageCell.self, forCellReuseIdentifier: voiceCellID)
+        tableView.register(ImageMessageCell.self, forCellReuseIdentifier: imageCellID)
+        tableView.register(VideoMessageCell.self, forCellReuseIdentifier: videoCellID)
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
             make.left.right.equalTo(self.view)
@@ -208,6 +210,7 @@ public class MessageViewController: BaseViewController {
             delegate?.tableViewWillBeginDragging?(tableView)
         }
     }
+
 }
 
 extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
@@ -256,9 +259,39 @@ extension MessageViewController: UITableViewDataSource, UITableViewDelegate {
                 textCell.content = textContent.text
                 return textCell
             }
+            if let imageContent = content as? ImageMessageContent {
+                let imageCell = tableView.dequeueReusableCell(withIdentifier: imageCellID) as! ImageMessageCell
+                imageCell.message = message
+                imageCell.imageContent = imageContent
+                return imageCell
+            }
+            if let videoContent = content as? VideoMessageContent {
+                let videoCell = tableView.dequeueReusableCell(withIdentifier: videoCellID) as! VideoMessageCell
+                videoCell.message = message
+                videoCell.videoContent = videoContent
+                return videoCell
+            }
         }
         let cell = tableView.dequeueReusableCell(withIdentifier: cellID) as! MessageCell
         return cell
+    }
+
+    public func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        let message = messages[indexPath.row]
+        if let customElem = message.getElem(0) as? TIMCustomElem, let content = MessageContent(data: customElem.data!) {
+            if let imgContent = content as? ImageMessageContent {
+                let width = UIScreen.main.width / 2 - 100
+                var height = width * CGFloat(imgContent.height) / CGFloat(imgContent.width)
+                if height > 240 { height = 240 }
+                return 86 + height + 1
+            }
+            if let videoContent = content as? VideoMessageContent {
+                let width = UIScreen.main.width * 3 / 8
+                let height = width * CGFloat(videoContent.height) / CGFloat(videoContent.width)
+                return 86 + height
+            }
+        }
+        return UITableView.automaticDimension
     }
 
     public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

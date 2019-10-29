@@ -12,7 +12,6 @@
 
 + (instancetype)contentWithImage:(UIImage *)image {
     ImageMessageContent *imageContent = [ImageMessageContent new];
-    imageContent.image = image;
     imageContent.type = MessageTypeImage;
     imageContent.width = image.size.width;
     imageContent.height = image.size.height;
